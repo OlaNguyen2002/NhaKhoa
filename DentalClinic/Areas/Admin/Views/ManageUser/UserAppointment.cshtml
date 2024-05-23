@@ -1,0 +1,253 @@
+﻿
+@{
+    ViewBag.Title = "UserAppointment";
+    ViewBag.Menu = "manage-user";
+}
+
+
+@section styles{
+    <style>
+        .account-page-content .main-content {
+            padding: 10px 10px 10px 10px !important;
+        }
+
+        #tab-order .search-order {
+            display: flex;
+            background-color: white;
+            padding: 20px 20px;
+            margin-bottom: 20px;
+        }
+
+        #tab-order .search-keyword {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        #tab-order .date-create {
+            flex: 2;
+            margin-left: 10px;
+        }
+
+            #tab-order .date-create .date-pick {
+                display: flex;
+                gap: 10px;
+            }
+
+                #tab-order .date-create .date-pick input {
+                    width: 45%;
+                }
+
+        #tab-order .search-tab-3 {
+            display: flex;
+            align-items: center;
+            padding-top: 10px;
+            flex: 2;
+        }
+
+            #tab-order .search-tab-3 .search-btn {
+                padding: 5px 25px;
+                border: solid #8c237b 0.5px;
+                border-radius: 10px;
+                font-size: 16px;
+                font-weight: 500;
+                cursor: pointer;
+                color: white !important;
+                background-color: #8c237b;
+            }
+
+        .list-order {
+            background-color: white;
+        }
+
+        .active-custom {
+            background-color: #3f87f5;
+            color: white !important;
+        }
+
+        .table-custom th {
+            text-align: center;
+        }
+
+        .table-custom td {
+            text-align: center;
+        }
+
+        td button {
+            margin-right: 10px;
+        }
+    </style>
+}
+
+<div class="account-page-content">
+    <div class="main-content">
+        <div class="page-header no-gutters has-tab">
+
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link " href="/Admin/ManageUser/UpdateUserInfo/@ViewBag.Id">Thông tin cá nhân</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/Admin/ManageUser/UserAppointment/@ViewBag.Id">Lịch sử đặt hẹn</a>
+                </li>
+
+            </ul>
+        </div>
+        <div class="">
+            <div class="tab-content m-t-15">
+                <div class="tab-pane fade show active" id="tab-order">
+                    <div class="search-order">
+                        <div class="form-group search-keyword" id="email-form">
+                            <label class="font-weight-semibold" for="keyword">Từ khoá</label>
+                            <input type="text" class="form-control" id="keyword" placeholder="Nhập từ khoá tìm kiếm" required>
+                        </div>
+                        <div class="date-create">
+                            <label class="font-weight-semibold">Ngày hẹn</label>
+                            <div class="date-pick">
+                                <input class="form-control" id="start-date" />
+                                <input class="form-control" id="end-date" />
+                            </div>
+
+                        </div>
+                        <div class="search-tab-3"><a onclick="SearchAppointment();" class="btn btn-primary">Tìm kiếm</a></div>
+
+                    </div>
+                    <div class="list-order">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-custom">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="width:10%">Mã lịch hẹn</th>
+                                        <th scope="col" style="width:10%">Tổng dịch vụ</th>
+                                        <th scope="col" style="width:10%">Bác sĩ</th>
+                                        <th scope="col" style="width:10%">Ngày đặt hẹn</th>
+                                        <th scope="col" style="width:10%">Trạng thái</th>
+                                        <th scope="col" style="width:20%">Thao tác</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody id="list-appointment">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="product-page-list">
+</div>
+@section Scripts{
+    <script src="~/Content/assets/js/datepicker.min.js"></script>
+    <script>
+        $('#start-date').datepicker({
+            format: 'dd-mm-yyyy',
+            autoHide: true,
+        });
+
+        $('#end-date').datepicker({
+            format: 'dd-mm-yyyy',
+            autoHide: true,
+        });
+
+        const SearchAppointment = function () {
+            getListAppointment();
+        }
+
+
+        let _currentPage = 1;
+        const getListAppointment = async function (page = 1) {
+            _currentPage = page;
+
+            let userId = '@ViewBag.Id';
+            let fromTime = ConvertTime($('#start-date').val());
+            let toTime = ConvertTime($('#end-date').val(), 23, 59, 59, 999);
+            let keyword = $('#keyword').val();
+
+            let rq = await fetch(Enum.ApiUrl + '/api/AdminManageAppointment/GetListAppointmentOfUser?UserId=' + userId + '&AppointmentCode=' + keyword + '&CreateStart=' + fromTime + '&CreateEnd=' + toTime + '&PageIndex=' + page, {
+                method: 'get',
+                headers: Enum.OptionAdminHeaderDefault,
+            });
+            let rs = await rq.json();
+            console.log(rs);
+            if (AdminCheckErrorResponse(rs) === false) return;
+            if (rs.data === null) return;
+            $('#list-appointment').html('');
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                $('.product-page-list').html('');
+                for (let page = 1; page <= rs.data.TotalPage; page++) {
+                    $('.product-page-list').append(`<a onclick="getListAppointment(${page});" data-page="${page}" class="product-page ${_currentPage === page ? 'active-custom' : ''}" id="page-num">${page}</a>`);
+                }
+
+                for (let index = 0; index < rs.data.ListUserAppointmentInfor.length; index++) {
+                    var x = rs.data.ListUserAppointmentInfor[index];
+                    let html = '<tr>';
+                    html += '<td>' + x.AppointmentCode + '</td>';
+                    html += '<td style="text-align:right">' + NumberFormat(x.TotalAmount) + ' VNĐ</td>';
+                    html += '<td>' + x.NameDoctor + '</td>';
+                    html += '<td>' + DateStringFormat({ stringDate: new Date(x.CreateTime) }) + '</td>';
+                    let status = '';
+                    let button = '';
+                    switch (x.Status) {
+                        case 'PENDING':
+                            status = '<span class="badge bg-light-warning"> Mới hẹn </span>';
+                            button = '<button class="btn btn-primary btn-tone m-r-5 btn-sm" onclick="confirmPending(this)" data-id="' + x.UserAppointmentId + '"> Tiếp nhận </button>';
+                            button += '<button class="btn btn-danger btn-tone m-r-5 btn-sm" onclick="adminCancel(this)" data-id="' + x.UserAppointmentId + '"> Huỷ </button>';
+                            break;
+                        case 'RECEIVE':
+                            status = '<span class="badge bg-light-info"> Đã tiếp nhận </span>';
+                            button = '<button class="btn btn-success btn-tone m-r-5 btn-sm" data-id="' + x.UserAppointmentId + '" onclick="confirmReceive(this)"> Đã đến </button>';
+                            break;
+
+                        case 'DONE':
+                            status = '<span class="badge bg-light-success"> Đã đến </span>';
+
+                            break;
+                        case 'USER_CANCEL':
+                            status = '<span class="badge bg-light-danger"> Người dùng huỷ </span>';
+
+                            break;
+                        case 'SYSTEM_CANCEL':
+                            status = '<span class="badge bg-light-danger"> Hệ thống huỷ </span>';
+
+                            break;
+                        default: break;
+                    }
+
+                    html += '<td>' + status + '</td>';
+                    html += '<td>' + button + '</td></tr>';
+
+                    $('#list-appointment').append(html);
+                }
+            }
+        }
+
+        const adminCancel = async function (el) {
+            let UserAppointmentId = $(el).data('id');
+            $(el).addClass('is-loading');
+            if (confirm('Bạn có chắc chắn muốn huỷ lịch hẹn này ?')) {
+                let rq = await fetch(Enum.ApiUrl + '/Api/AdminManageAppointment/SystemCancelAppointment?userAppointmentId=' + UserAppointmentId, {
+                    method: 'get',
+                    headers: Enum.OptionAdminHeaderDefault,
+                });
+                let rs = await rq.json();
+                $(el).removeClass('is-loading');
+
+                if (AdminCheckErrorResponse(rs) === false) return;
+
+                if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                    alert('Cập nhật trạng thái thành công');
+                    window.location.reload();
+                }
+            }
+
+        }
+        const initPage = async function () {
+            await getListAppointment();
+        }
+
+        initPage();
+    </script>
+}
+

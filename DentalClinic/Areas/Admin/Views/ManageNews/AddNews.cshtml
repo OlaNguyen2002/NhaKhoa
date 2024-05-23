@@ -1,0 +1,128 @@
+﻿
+@{
+    ViewBag.Title = "AddNews";
+}
+@section styles{
+    <style>
+        .form-insert h2 {
+            text-align: center;
+        }
+
+        .form-insert {
+            display: flex;
+        }
+
+        .body {
+            display: flex;
+        }
+
+        .left {
+            padding-bottom: 20px;
+            padding-top: 20px;
+            width: 200px;
+        }
+
+        .right {
+            display: flex;
+            flex: 2;
+            flex-direction: column;
+            padding: 15px;
+        }
+
+        .preview-insert {
+            padding-top: 10px;
+        }
+
+        .bottom {
+            padding-right: 20px;
+        }
+    </style>
+}
+
+
+<div id="modal-insert" class="modal-insert">
+    <div class="modal-custom-insert">
+        <div class="form-insert">
+            <div style="flex:1;"><h2>CẬP NHẬT TIN TỨC</h2></div>
+            <div style="padding-right: 20px; "><button style="width: 150px;" class="btn btn-primary" onclick="AddNews();">Thêm tin tức</button></div>
+        </div>
+        <div class="body" style="display:flex">
+            <div class="left">
+                <div class="preview-insert">
+                    <div class="preview" style="width: 200px; height: 200px; background-position: center; background-repeat: no-repeat; background-size: cover; border: .5px solid #d7d7d7; cursor: pointer; background-image: url('/Content/img/pick-image.png');" onclick="ChooseThumbnail(this);"></div>
+                    <input type="file" style="display: none;" onchange="ChooseThumbnail_OnChange(this);" required />
+                    <input type="hidden" id="Thumbnail" />
+                </div>
+            </div>
+
+            <div class="right">
+                <div class="form-group">
+                    <label class="font-weight-semibold" for="name">Tiêu đề</label>
+                    <input type="text" class="form-control" id="Title" placeholder="Nhập tiêu đề" required>
+                </div>
+                <div class="form-group">
+                    <label class="font-weight-semibold" for="name">Mô tả</label>
+                    <textarea class="form-control" aria-label="With textarea" style="resize:none;" placeholder="Nhập nội dung" rows="7" id="Description"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="bottom">
+            <label class="font-weight-semibold" for="name">Nội dung</label>
+            <textarea class="form-control" aria-label="With textarea" style="resize:none;" placeholder="Nhập lời mô tả" rows="10" id="Content"></textarea>
+        </div>
+    </div>
+
+</div>
+@section scripts{
+    <script src="/Content/ckeditor/ckeditor.js"></script>
+    <script>
+        var contentEditor = CKEDITOR.replace('Content', {
+            width: '100%',
+            resize_minHeight: 150,
+            height: '55vh',
+            ...(window.configCkFinder || {})
+        });
+        var ChooseThumbnail = function (el) { $(el).siblings('input[type=file]').click(); }
+        var ChooseThumbnail_OnChange = function (el) {
+            let reader = new FileReader();
+            reader.onloadend = function (e) {
+                $(el).siblings('input[type=hidden]').val(e.currentTarget.result.substring(e.currentTarget.result.indexOf(',') + 1, e.currentTarget.result.length));
+                $(el).siblings('.preview').css('background-image', `url(${e.currentTarget.result})`);
+            }
+            reader.readAsDataURL(el.files[0])
+        }
+
+        const AddNews = async function () {
+            let model = {
+                NewsId: '',
+                Thumbnail: $('#Thumbnail').val(),
+                Title: $('#Title').val(),
+                SearchTitle: '',
+                Description: $('#Description').val(),
+                NewsContent: contentEditor.getData()
+            };
+            model.SearchTitle = RemoveVietnameseTones(model.Title);
+            if (model.Thumbnail === '') {
+                alert("Bạn cần thêm ảnh"); return;
+            }
+            if (GetObjectProperty(model, 'Title') === '') { alert('Tên tiêu đề không được để trống'); return; }
+            if (GetObjectProperty(model, 'Description') === '') { alert('Mô tả không được để trống'); return; }
+            if (GetObjectProperty(model, 'NewsContent') === '') { alert('Nội dung không được để trống'); return; }
+
+            const rp = await fetch('/api/AdminNews/InsertNews', {
+                method: 'post',
+                headers: Enum.OptionHeaderDefault,
+                body: JSON.stringify(model)
+            });
+            let rs = await rp.json();
+
+            console.log(rs);
+
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                if (rs.message !== '' && rs.message !== null) alert(rs.message);
+                alert('Thêm tin tức thành công');
+                window.location.href = '/Admin/ManageNews/';
+            }
+        }
+    </script>
+}

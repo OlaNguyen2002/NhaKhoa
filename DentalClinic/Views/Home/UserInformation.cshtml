@@ -1,0 +1,196 @@
+﻿
+@{
+    ViewBag.Title = "UserInformation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <style>
+
+        .wrapper {
+            position: relative;
+            width: 600px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 0.5px solid grey;
+            margin-top: 20px !important;
+            margin-bottom: 20px !important;
+            margin: auto;
+        }
+
+            .wrapper .form-box {
+                width: 100%;
+                padding: 30px 40px;
+            }
+
+        .form-box h2 {
+            font-size: 2em;
+            color: #162938;
+            text-align: center;
+        }
+
+        .footer-form {
+            display: flex;
+            justify-content: center;
+        }
+
+        .form-group {
+            padding-top: 10px;
+        }
+
+        label {
+            margin-bottom: 0px !important;
+        }
+
+        .date-hour-form {
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn i {
+            font-size: 16px;
+        }
+
+        .btn-change-password {
+            width: 150px;
+            height: 40px;
+            background-color: #162938;
+            border: none;
+            outline: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            color: #fff;
+            font-weight: 500;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .avatar #setAvatar {
+            width: 100% !important;
+            height: 100% !important;
+            border-radius: 50%;
+        }
+
+        .avatar-card {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .avatar-sections {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+    </style>
+}
+
+<!-- Content Area -->
+<div class="content-area contact-page">
+    <div class="wrapper">
+        <div class="form-box register">
+            <h2>Cập nhật thông tin cá nhân</h2>
+            <div>
+                <div class="form-group" id="" style="display: flex; justify-content: center;">
+                    <div class="avatar-sections">
+                        <div class="avatar avatar-image  m-h-10 m-r-15" style="height: 80px; width: 80px;">
+                            <img id="setAvatar" alt="">
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="ChooseAvatar(this)">Đổi ảnh đại diện</button>
+                            <input type="file" style="display:none;" onchange="ChooseAvatar_OnChange(this);" required />
+                            <input type="hidden" id="Avatar" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" id="">
+                <label class="font-weight-semibold" for="name">Họ và tên</label>
+                <input type="text" class="form-control" id="name" placeholder="Nhập họ và tên" required>
+            </div>
+            <div class="form-group" id="">
+                <label class="font-weight-semibold" for="name">Tên đăng nhập</label>
+                <input type="text" class="form-control" id="account" placeholder="Nhập tên đăng nhập" disabled >
+            </div>
+            <div class="form-group" id="">
+                <label class="font-weight-semibold" for="name">Email</label>
+                <input type="text" class="form-control" id="email" placeholder="Nhập email" disabled>
+            </div>
+            <div class="form-group" id="">
+                <label class="font-weight-semibold" for="name">Số điện thoại</label>
+                <input type="text" class="form-control" id="phone" placeholder="Nhập số điện thoại" required>
+            </div>
+            <div class="form-group" id="">
+                <label class="font-weight-semibold" for="name">Địa chỉ</label>
+                <input type="text" class="form-control" id="address" placeholder="Nhập địa chỉ" required>
+            </div>
+            <div style="display: flex; justify-content: center;"><button class="btn-change-password" onclick="UpdateUserInformation();">Cập nhật</button></div>
+        </div>
+        </div>
+    </div>
+</div><!-- Content Area End-->
+@section scripts{
+    <script src="~/Content/assets/js/base64.js"></script>
+    <script>
+        var ChooseAvatar = function (el) { $(el).siblings('input[type=file]').click(); }
+        var ChooseAvatar_OnChange = function (el) {
+            let reader = new FileReader();
+            reader.onloadend = function (e) {
+                $(el).siblings('input[type=hidden]').val(e.currentTarget.result.substring(e.currentTarget.result.indexOf(',') + 1, e.currentTarget.result.length));
+                $('#setAvatar').attr('src', `${e.currentTarget.result}`);
+            }
+            reader.readAsDataURL(el.files[0]);
+        }
+        const getUserInformation = async function () {
+
+            //gọi api ở admin
+            let rq = await fetch(Enum.ApiUrl + '/api/User/GetInforUser', {
+                method: 'get',
+                headers: Enum.OptionHeaderDefault
+            });
+            let rs = await rq.json();
+            if (CheckErrorResponse(rs) === false) return;
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                $('#setAvatar').attr("src", GetObjectProperty(rs.data, 'Avatar'));
+                $('#name').val(GetObjectProperty(rs.data, 'Name'));
+                $('#account').val(GetObjectProperty(rs.data, 'Account'));
+                $('#email').val(GetObjectProperty(rs.data, 'Email'));
+                $('#phone').val(GetObjectProperty(rs.data, 'Phone'));
+                $('#address').val(GetObjectProperty(rs.data, 'Address'));
+            }
+        }
+        getUserInformation();
+        const UpdateUserInformation = async function () {
+            let model = {
+                Name: $('#name').val(),
+                Avatar: $('#Avatar').val(),
+                SearchName: '',
+                Phone: $('#phone').val(),
+                Address: $('#address').val()
+            }
+            model.SearchName = RemoveVietnameseTones(model.Name);
+            let rq = await fetch(Enum.ApiUrl + '/api/User/UpdateInfoUser', {
+                method: 'post',
+                headers: Enum.OptionHeaderDefault,
+                body: JSON.stringify(model)
+            });
+            let rs = await rq.json();
+
+            if (CheckErrorResponse(rs) === false) return;
+
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Đã cập nhật thành công",
+                    preConfirm: function () { window.location.href = '/'; },
+                })
+            }
+        }
+    </script>
+}
+
+

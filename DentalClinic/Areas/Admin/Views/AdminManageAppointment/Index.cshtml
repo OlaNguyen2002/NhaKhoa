@@ -1,0 +1,261 @@
+﻿
+@section styles{
+    <style>
+        .nav-tab {
+            display: flex;
+            display: flex;
+            justify-content: flex-end;
+            margin: 10px;
+
+        }
+
+            .nav-tab a {
+                width: 100px;
+                display: flex;
+                height: 35px;
+                align-items: center;
+                justify-content: center;
+                border: 0.5px solid grey;
+                cursor: pointer;
+            }
+
+                .nav-tab a.active {
+                    background-color: lightgrey;
+                    color: black;
+                }
+        .tab .day-section {
+            margin: 0px 0px 10px 5px;
+            display: flex;
+            justify-content: center;
+            height: 30px;
+        }
+        .time-section {
+            display: flex;
+        }
+
+            .time-section .time-label {
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                margin-left: 5px;
+            }
+
+                .time-section .time-label > div {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 130px;
+                    height: 80px;
+                    border: .5px solid #e3e3e3;
+                    background-color: #F8F9FB;
+                }
+
+            .time-section .time-data {
+               /* border: .5px solid #e3e3e3;*/
+                flex: 1;
+                display: flex;
+                gap:5px;
+            }
+
+                .time-section .time-data .bar {
+                    display: flex;
+                    position: relative;
+                    padding:5px;
+                    width: 160px;
+                }
+
+                    .time-section .time-data .bar > div {
+                        display: flex;
+                        position: absolute;
+                        background-color: #C9E0FF;
+                    }
+
+        .days-section > div {
+            width: 130px;
+            height: 60px;
+            border: 0.5px solid #e3e3e3;
+            text-align: center;
+            background-color: #F8F9FB;
+        }
+        .tab .day-section .input-date {
+            background-color: lightgray;
+            width: 160px;
+            height: 36px;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
+}
+<div class="card">
+    <div class="nav-tab">
+        <a  onclick="TabSelect(this);" data-tab="tab-day">Day</a>
+        <a  onclick="TabSelect(this);" data-tab="tab-week">Week</a>
+        <a class="active" onclick="TabSelect(this);" data-tab="tab-month">Month</a>
+    </div>
+
+    <div>
+        <div class="tab" id="tab-day" style="display:none;">
+            <div>
+                <div class="day-section">
+                    <input type="date" class="input-date"/>
+                </div>
+                <div class="time-section">
+                    <div class="time-label">
+
+                    </div>
+                    <div class="time-data">
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="tab" id="tab-week" style="display:none;">
+            <div>
+                <div class="days-section"style="display:flex;margin-left: 5px;">
+
+                </div>
+                <div class="time-section">
+                    <div class="time-label"></div>
+                    <div class="time-data"></div>
+                </div>
+            </div>
+        </div>
+        <div class="tab" id="tab-month" style="display:flex;">
+            Month
+        </div>
+    </div>
+</div>
+
+
+
+
+@section scripts{
+    <script>
+        const TabSelect = function (el) {
+            const tabId = $(el).data('tab');
+            $('.tab').css('display', 'none');
+            $('#' + tabId).css('display', 'flex');
+            $(el).siblings().removeClass('active');
+            $(el).addClass('active');
+        }
+        const LoadListUserAppointment = async function () {
+            const rq = await fetch('/api/AdminManageAppointment/GetListUserAppointment', {
+                method: 'get',
+                headers: Enum.OptionAdminHeaderDefault
+            });
+            const rs = await rq.json();
+            console.log(rs);
+            if (CheckErrorResponse(rs) === false) return;
+            $('#tab-day .time-section .time-label').html('');
+            for (let i = 8; i <= 18; i++) {
+
+                let hourString = i < 10 ? '0' + i : i;
+
+                $('#tab-day .time-section .time-label').append(`
+         <div id="hour-${i}">
+        ${hourString} : 00 ${i >= 12 ? 'PM' : 'AM'}
+                    </div>
+        `);
+            }
+
+
+            $('#tab-day .time-section .time-data').html('');
+            const rootTime = 8;
+            for (let i = 0; i < rs.data.ListUserAppointmentInfor.length; i++) {
+                const item = rs.data.ListUserAppointmentInfor[i];
+                const startPoint = (item.Hour - rootTime) * 80 + (item.Minute / 30) * 40;
+                const length = item.TotalExpectTime / 30 * 40;
+
+                $('#tab-day .time-section .time-data').append(`<div class="bar"><div style="height:${length}px;width:150px;top:${startPoint}px;"><div>${item.Name}</div></div></div>`);
+            }
+
+            //Week
+            const today = new Date(2023,5,13);
+            const firstDay = new Date(today.setDate(today.getDate() - today.getDay() + i));
+            $('#tab-week .days-section').html(`<div></div>`);
+            for (let i = 1; i <= 7; i++) {
+                const nextDay = new Date(today.setDate(today.getDate() - today.getDay() + i));
+                let day = '';
+                if (nextDay.getDay() > 0) { day = 'T' + (nextDay.getDay() + 1) }
+                else {
+                    day = 'CN'
+                }
+                $('#tab-week .days-section').append(`
+    <div >${day}<br>${nextDay.getDate() + '/' + (nextDay.getMonth() + 1) + '/' + nextDay.getFullYear()}</div>
+    `);
+
+                $('#tab-week .time-section .time-data').append(`
+    <div style="width:130px;display:flex;gap:2px;" data-year="${nextDay.getFullYear()}" data-date="${nextDay.getDate()}" data-month="${(nextDay.getMonth() + 1)}"></div>
+    `);
+            }
+
+            $('#tab-week .time-section .time-label').html('');
+            for (let i = 8; i <= 18; i++) {
+
+                let hourString = i < 10 ? '0' + i : i;
+
+                $('#tab-week .time-section .time-label').append(`
+         <div id="hour-${i}">
+        ${hourString} : 00 ${i >= 12 ? 'PM' : 'AM'}
+                    </div>
+        `);
+            }
+
+            //100 x 80
+            /*const rootTime = 8;*/
+            for (let i = 0; i < rs.data.ListUserAppointmentInfor.length; i++) {
+                const item = rs.data.ListUserAppointmentInfor[i];
+                const startPoint = (item.Hour - rootTime) * 80 + (item.Minute / 30) * 40;
+                const length = item.TotalExpectTime / 30 * 40;
+
+                $(`#tab-week .time-section .time-data div[data-year=${item.Year}][data-month=${item.Month}][data-date=${item.Day}]`).append(`
+    <div style="width:6px;height:${length}px;background-color:#2B88FB;margin-top:${startPoint}px;"></div>
+    `);
+            }
+        }
+
+        const InitPage = async function () {
+            LoadListUserAppointment();
+
+
+        }
+
+
+            //let listData = [
+            //    {
+            //        "UserAppointmentId": "2341b7fa-c423-467f-8e71-7dafcec67cd8",
+            //        "UserId": "399bf3f0-248a-455e-a466-fbbe00cff2a3",
+            //        "AppointmentCode": "01GVV5N7M9",
+            //        "Name": "Vũ Thị Phương Thảo",
+            //        "Phone": "0987456342",
+            //        "Email": "thaovu1309@gmail.com",
+            //        "Address": "Hà Nội",
+            //        "DoctorId": "5ffe3af8-7f1f-46c1-914b-e069722be540",
+            //        "Hour": 9, "Minute": 30, "Day": 8, "Month": 5, "Year": 2023,
+            //        "Status": "PENDING", "CreateTime": 1683599630025,
+            //        "TotalExpectTime": 90
+            //    },
+
+            //    {
+            //        "UserAppointmentId": "2341b7fa-c423-467f-8e71-7dafcec67cd8",
+            //        "UserId": "399bf3f0-248a-455e-a466-fbbe00cff2a3",
+            //        "AppointmentCode": "01GVV5N7M9",
+            //        "Name": "Vũ Thị Phương Thảo",
+            //        "Phone": "0987456342",
+            //        "Email": "thaovu1309@gmail.com",
+            //        "Address": "Hà Nội",
+            //        "DoctorId": "5ffe3af8-7f1f-46c1-914b-e069722be540",
+            //        "Hour": 14, "Minute": 30, "Day": 10, "Month": 5, "Year": 2023,
+            //        "Status": "PENDING", "CreateTime": 1683599630025,
+            //        "TotalExpectTime": 90
+            //    },
+            //];
+
+
+           
+        InitPage();
+    </script>
+}

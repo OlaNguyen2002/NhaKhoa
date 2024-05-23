@@ -1,0 +1,121 @@
+﻿
+@{
+    Layout = null;
+    ViewBag.Title = "Đăng nhập";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/Content/img/favicon.png" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow&amp;family=Barlow+Condensed&amp;family=Gilda+Display&amp;display=swap">
+    <link rel="stylesheet" href="/Content/css/plugins.css" />
+    <link rel="stylesheet" href="/Content/css/login.css">
+    <link rel="stylesheet" href="/Content/fontawesome/css/all.css">
+    <title>@ViewBag.Title</title>
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <div class="form-box login">
+            <h2>Đăng nhập</h2>
+            <div>
+                <div class="input-box">
+                    <span class="icon"><i class="fas fa-user"></i></span>
+                    <input type="text" id="Account" required>
+                    <label for="">Tài khoản</label>
+                </div>
+                <div class="input-box">
+                    <span class="icon" id="toggle" onclick="showPassword();"><i class="fas fa-eye-slash"></i></span>
+                    <input type="password" id="password" required>
+                    <label for="">Mật khẩu</label>
+                </div>
+                <div class="remember-forgot">
+                    <a href="#">Quên mật khẩu?</a>
+                </div>
+                <button class="btn-login" onclick="LoginOnClick();"> Đăng nhập</button>
+                <div class="login-register">
+                    <p>
+                        Bạn chưa có tài khoản?
+                        <a href="/dang-ky" class="register-link">Đăng ký</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/Content/assets/js/jquery-3.6.0.min.js"></script>
+    <script src="~/Content/assets/js/bootstrap.min.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="~/Content/assets/js/helper.js"></script>
+    <link href="~/Content/css/login.css" rel="stylesheet" />
+    <script src="~/Content/assets/vendors/sweetalert2/sweetalert2.all.min.js"></script>
+    <script>
+        const password = document.getElementById('password');
+        const toggle = document.getElementById('toggle');
+
+        const showPassword = function () {
+            $('#toggle').html('');
+            let html = '';
+            if (password.type === 'password') {
+                password.setAttribute('type', 'text');
+                html = '<i class="fas fa-eye"></i>';
+            } else {
+                password.setAttribute('type', 'password');
+                html = '<i class="fas fa-eye-slash"></i>';
+            }
+            $('#toggle').append(html);
+        }
+        if (userToken !== '' && userToken !== null && typeof userToken !== 'undefined') {
+            window.location.href = '/';
+        }
+        const LoginOnClick = async function () {
+            let model = {
+                Account: $('#Account').val(),
+                Password: $('#password').val()
+            }
+            if (GetObjectProperty(model, 'Account') === '') {
+                Swal.fire({
+                    title: "Tên tài khoản không được để trống?",
+                    type: "error"
+                })
+                return;
+            }
+            if (GetObjectProperty(model, 'Password') === '') {
+                Swal.fire({
+                    title: "Mật khẩu không được để trống?",
+                    type: "error"
+                })
+                return;
+            }
+
+            let rq = await fetch('/api/user/Login', {
+                method: 'post',
+                headers: Enum.OptionHeaderDefault,
+                body: JSON.stringify(model)
+            })
+            let rs = await rq.json();
+
+            console.log(rs);
+
+            if (CheckErrorResponse(rs) === false) return;
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                SetCookie('UserToken', GetObjectProperty(rs.data, 'token'));
+                Swal.fire({
+                    icon: "success",
+                    title: "Đăng nhập thành công",
+                    preConfirm: function () { window.location.href = '/'; },
+                })
+                window.location.href = '/';
+            }
+        }
+    </script>
+</body>
+
+
+</html>

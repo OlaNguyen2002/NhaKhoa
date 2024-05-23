@@ -1,0 +1,648 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+
+
+@section styles {
+    <style>
+        .main-report {
+            margin: 15px auto;
+            display: flex;
+            gap: 20px;
+        }
+
+            .main-report .sidebar-left {
+                width: 28%;
+            }
+
+                .main-report .sidebar-left .header-report {
+                    font-weight: 600;
+                    font-size: 20px;
+                    padding-top: 10px;
+                    color: #434343;
+                }
+
+                .main-report .sidebar-left .list-sidebar {
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                    .main-report .sidebar-left .list-sidebar .item-sidebar {
+                        background-color: white;
+                        padding: 10px 15px 20px;
+                        border-radius: 5px;
+                        box-shadow: 0 5px 14px rgb(0 0 0 / 10%);
+                        margin-top: 20px;
+                    }
+
+                        .main-report .sidebar-left .list-sidebar .item-sidebar .header-item-sidebar {
+                            font-size: 15px;
+                            font-weight: 600;
+                            color: #4f4f4f;
+                            padding: 10px 0;
+                        }
+
+                        .main-report .sidebar-left .list-sidebar .item-sidebar .list-item-sidebar {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 12px;
+                            position: relative;
+                        }
+
+                            .main-report .sidebar-left .list-sidebar .item-sidebar .list-item-sidebar .item {
+                                display: flex;
+                                align-items: center;
+                                gap: 10px;
+                                width: max-content;
+                                cursor: pointer;
+                                position: relative;
+                                flex-wrap: wrap;
+                            }
+
+                                .main-report .sidebar-left .list-sidebar .item-sidebar .list-item-sidebar .item.active .icon-check {
+                                    border-color: #44c4c4;
+                                }
+
+                                    .main-report .sidebar-left .list-sidebar .item-sidebar .list-item-sidebar .item.active .icon-check .circle-icon {
+                                        width: 8px;
+                                        height: 8px;
+                                        border-radius: 50%;
+                                        background-color: white;
+                                        background-color: #44c4c4;
+                                    }
+
+                                .main-report .sidebar-left .list-sidebar .item-sidebar .list-item-sidebar .item .icon-check {
+                                    width: 18px;
+                                    height: 18px;
+                                    border: 1px solid #676767;
+                                    border-radius: 50%;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                }
+
+                                    .main-report .sidebar-left .list-sidebar .item-sidebar .list-item-sidebar .item .icon-check .circle-icon {
+                                    }
+
+                                .main-report .sidebar-left .list-sidebar .item-sidebar .list-item-sidebar .item .text {
+                                    font-size: 14px;
+                                    font-family: Arial,Helvetica,sans-serif;
+                                    letter-spacing: 0.3px;
+                                    border: none;
+                                    outline: none;
+                                }
+
+            .main-report .content-report {
+                width: 82%;
+                margin-top: 20px;
+            }
+
+                .main-report .content-report .chart-report {
+                    background-color: white;
+                    padding: 20px 10px;
+                }
+
+                .main-report .content-report .document-report {
+                    background-color: #909090;
+                    display: flex;
+                    justify-content: center;
+                    height: 90vh;
+                    max-height: 100%;
+                    overflow-y: scroll;
+                }
+
+                    .main-report .content-report .document-report .content {
+                        width: 76%;
+                        background-color: white;
+                        margin: 30px 0;
+                        min-height: 80%;
+                        height: max-content;
+                        padding: 20px 15px;
+                        display: flex;
+                        justify-content: space-between;
+                        flex-direction: column;
+                        gap: 15px;
+                    }
+
+                        .main-report .content-report .document-report .content .header-document {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                        }
+
+                            .main-report .content-report .document-report .content .header-document .title {
+                                font-size: 22px;
+                                font-weight: 600;
+                            }
+
+                            .main-report .content-report .document-report .content .header-document .from-time {
+                                font-size: 14px;
+                                color: #5b5b5b;
+                            }
+
+                        .main-report .content-report .document-report .content .body-document {
+                            display: flex;
+                            flex: 1;
+                            flex-direction: column;
+                        }
+
+                            .main-report .content-report .document-report .content .body-document > table {
+                                margin: 0 auto;
+                                width: 100%;
+                                font-size: 15px;
+                            }
+
+                                .main-report .content-report .document-report .content .body-document > table > thead tr {
+                                    border-bottom: 1px solid #d5d5d5;
+                                    background-color: #B2E8Fd;
+                                }
+
+                                    .main-report .content-report .document-report .content .body-document > table > thead tr th {
+                                        text-align: center;
+                                    }
+
+                                .main-report .content-report .document-report .content .body-document > table > tbody tr {
+                                    background-color: #ffddb1;
+                                    font-weight: 600;
+                                }
+
+                                    .main-report .content-report .document-report .content .body-document > table > tbody tr td {
+                                        padding: 12px 8px;
+                                    }
+
+                                .main-report .content-report .document-report .content .body-document > table > thead tr th {
+                                    padding: 10px 8px;
+                                    border: 1px solid #d5d5d5;
+                                    border-left: none;
+                                    border-right: none;
+                                }
+
+                                .main-report .content-report .document-report .content .body-document > table > tbody tr td,
+                                .main-report .content-report .document-report .content .body-document > table > tbody tr th {
+                                    text-align: center;
+                                    padding: 8px;
+                                }
+
+                                    .main-report .content-report .document-report .content .body-document > table > tbody tr td:first-child,
+                                    .main-report .content-report .document-report .content .body-document > table > tbody tr th:first-child {
+                                        text-align: left;
+                                        padding-left: 15px;
+                                    }
+
+                                    .main-report .content-report .document-report .content .body-document > table > tbody tr td:first-child {
+                                        font-size: 14px;
+                                        font-weight: 600;
+                                        color: #666666;
+                                        font-style: italic;
+                                    }
+
+                                    .main-report .content-report .document-report .content .body-document > table > tbody tr td:last-child,
+                                    .main-report .content-report .document-report .content .body-document > table > tbody tr th:last-child {
+                                        text-align: right;
+                                        padding-right: 15px;
+                                    }
+
+                        .main-report .content-report .document-report .content .footer-document {
+                            font-size: 16px;
+                            font-weight: 700;
+                            text-align: center;
+                        }
+
+        input[name="chossedaypicker"], input[name="daterangepicker"] {
+            opacity: 0.8;
+            outline: none;
+            border: none;
+            font-size: 13px;
+            color: #818181;
+            padding: 0 30px;
+            transform: translateY(-10px);
+        }
+
+        .daterangepicker {
+            left: 430px !important;
+            top: 656px !important;
+        }
+
+            .daterangepicker.opensleft:after, .daterangepicker.opensright:before, .daterangepicker.opensleft:before, .daterangepicker.opensright:after {
+                display: none;
+            }
+
+        .main-report .sidebar-left .list-sidebar .item-sidebar .button-export-excel {
+            background-color: #3da93d;
+            display: block;
+            padding: 6px;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
+            font-weight: 600;
+            margin: 10px;
+        }
+
+            .main-report .sidebar-left .list-sidebar .item-sidebar .button-export-excel:hover {
+                background-color: forestgreen;
+            }
+
+            .main-report .sidebar-left .list-sidebar .item-sidebar .button-export-excel .text-export {
+                color: white;
+            }
+
+        .body-document .total-revenue {
+            font-size: 14px;
+            margin-top: 15px;
+        }
+    </style>
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <h2>Báo cáo thống kê</h2>
+    </div>
+    <div class="main-report">
+        <div class="sidebar-left">
+            <div class="list-sidebar">
+                <div class="item-sidebar export-excel">
+                    <a class="button-export-excel" onclick="downloadExportFileExcel()">
+                        <div class="text-export">
+                            Xuất ra Excel
+                        </div>
+                    </a>
+                </div>
+
+                <div class="item-sidebar item-time">
+                    <h3 class="header-item-sidebar">Thời gian</h3>
+                    <div class="list-item-sidebar" id="sidebartime">
+                        <div class="item active" onclick="showtype(this);" data-time="thismonth">
+                            <div class="icon-check">
+                                <div class="circle-icon">
+                                </div>
+                            </div>
+                            <div class="text">Tháng này</div>
+                        </div>
+                        <div class="item" onclick="showtype(this);" data-time="prevmonth">
+                            <div class="icon-check">
+                                <div class="circle-icon">
+                                </div>
+                            </div>
+                            <div class="text">Tháng trước</div>
+                        </div>
+                        <div class="item" onclick="showtype(this);" data-time="thisyear">
+                            <div class="icon-check">
+                                <div class="circle-icon">
+                                </div>
+                            </div>
+                            <div class="text">Năm nay</div>
+                        </div>
+                        <div class="item" onclick="showtype(this);" data-time="prevyear">
+                            <div class="icon-check">
+                                <div class="circle-icon">
+                                </div>
+                            </div>
+                            <div class="text">Năm ngoái</div>
+                        </div>
+                        <div class="item custom-time" onclick="chosseaboutday(this);" data-time="chosserange">
+                            <div class="icon-check">
+                                <div class="circle-icon">
+                                </div>
+                            </div>
+                            <div class="text" style="width:max-content">
+                                Chọn khoảng ngày
+                            </div>
+                        </div>
+                        <input name="daterangepicker" disabled />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content-report">
+            <div class="document-report report-type" id="documentshow">
+                <div class="content">
+                    <div class="header-document">
+                        <div class="title">
+                            Báo cáo doanh thu theo thời gian
+                        </div>
+                        <div class="from-time" id="documenttime">
+
+                        </div>
+                    </div>
+                    <div class="body-document">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thời gian</th>
+                                    <th>Doanh thu</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabledocument">
+                            </tbody>
+                        </table>
+                        <div class="total-revenue">Tổng doanh thu: <span id="total-revenue">0</span> VNĐ</div>
+                    </div>
+                    <div class="footer-document">
+                        Nha Khoa Phương Thảo
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section scripts{
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    @* <script src="/Scripts/helper.js"></script>*@
+    <script>
+        // time
+        var now = new Date();
+        var prevDay = new Date();
+        prevDay.setDate(prevDay.getDate() - 1);
+        var prevMonth = new Date();
+        prevMonth.setMonth(now.getMonth() - 1);
+        var prevYear = new Date();
+        prevYear.setFullYear(now.getFullYear() - 1);
+
+        // Doanh thu
+        let datathismonth = {
+            Revenue: 0,
+            listDataReport: []
+        };
+        let dataprevmonth = {
+            Revenue: 0,
+            listDataReport: []
+        };
+        let datathisyear = {
+            Revenue: 0,
+            listDataReport: []
+        };
+        let dataprevyear = {
+            Revenue: 0,
+            listDataReport: []
+        };
+        let dataabouttime = {
+            Revenue: 0,
+            listDataReport: []
+        }
+
+
+        const InitPage = async function () {
+            let rq = await fetch('/api/AdminReport/GetAllReportMonthYear', {
+                method: 'get',
+                headers: Enum.OptionAdminHeaderDefault
+            });
+            let rs = await rq.json();
+            if (AdminCheckErrorResponse(rs) === false) return;
+
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                let reportThisMonth = rs.data.ListReportThisMonth;
+                let reportPrevMonth = rs.data.ListReportPrevMonth;
+                let reportThisYear = rs.data.ListReportThisYear;
+                let reportPrevYear = rs.data.ListReportPrevYear;
+
+                console.log(rs.data);
+
+                //Báo cáo tháng này
+                datathismonth.Revenue = reportThisMonth.TotalPrice;
+                for (let thismonth = 0; thismonth < reportThisMonth.ListAllReportDaily.length; thismonth++) {
+                    datathismonth.listDataReport.push(
+                        {
+                            TableId: reportThisMonth.ListAllReportDaily[thismonth].Day + '-' + reportThisMonth.ListAllReportDaily[thismonth].Month + '-' + reportThisMonth.ListAllReportDaily[thismonth].Year,
+                            TableData: reportThisMonth.ListAllReportDaily[thismonth].TotalPrice
+                        });
+                }
+
+                //Báo cáo tháng trước
+                dataprevmonth.Revenue = reportPrevMonth.TotalPrice;
+                for (let prevmonth = 0; prevmonth < reportPrevMonth.ListAllReportDaily.length; prevmonth++) {
+                    dataprevmonth.listDataReport.push(
+                        {
+                            TableId: reportPrevMonth.ListAllReportDaily[prevmonth].Day + '-' + reportPrevMonth.ListAllReportDaily[prevmonth].Month + '-' + reportPrevMonth.ListAllReportDaily[prevmonth].Year,
+                            TableData: reportPrevMonth.ListAllReportDaily[prevmonth].TotalPrice
+                        });
+                }
+
+                //Báo cáo năm này
+                datathisyear.Revenue = reportThisYear.TotalPrice;
+                for (let thisyear = 0; thisyear < reportThisYear.ListAllReportMonth.length; thisyear++) {
+                    datathisyear.listDataReport.push(
+                        {
+                            TableId: 'Tháng ' + reportThisYear.ListAllReportMonth[thisyear].Month,
+                            TableData: reportThisYear.ListAllReportMonth[thisyear].TotalPrice
+                        });
+                }
+
+                //Báo cáo năm trước
+                dataprevyear.Revenue = reportPrevYear.TotalPrice;
+                for (let prevyear = 0; prevyear < reportPrevYear.ListAllReportMonth.length; prevyear++) {
+                    dataprevyear.listDataReport.push(
+                        {
+                            TableId: 'Tháng ' + reportPrevYear.ListAllReportMonth[prevyear].Month,
+                            TableData: reportPrevYear.ListAllReportMonth[prevyear].TotalPrice
+                        });
+                }
+            }
+            showForInitPage();
+        }
+        InitPage();
+
+
+        // chọn loại data hiển thị
+        var showtype = function (item) {
+            $(item).closest('.list-item-sidebar').find('.active').removeClass('active');
+            $(item).addClass('active');
+            if ($('#sidebartime').find('.active').hasClass('custom-time')) {
+                let inputVal = $('#sidebartime').find('input[name="daterangepicker"]').val().replaceAll(' ', '');
+                inputVal = inputVal.split('đến');
+                chosseaboutdaypicker(inputVal[0], inputVal[1]);
+            }
+            // không chọn ngày thì ở trong đây
+            else {
+                let datatime = $('#sidebartime').find('.active').data("time");
+                if (datatime === "") { alert("Có lỗi xảy ra khi tạo báo cáo !"); return; }
+                console.log(datatime);
+                paintingdocument(eval("data" + datatime));
+            }
+        }
+
+        // hàm show ngày + click chọn ngày , khoảng ngày
+        $(function () {
+            $('input[name="daterangepicker"]').daterangepicker({
+                locale: {
+                    format: 'DD-MM-YYYY',
+                    separator: " đến "
+                },
+                opens: 'left',
+            }, function (start, end, label) { });
+            $('input[name="daterangepicker"]').on('apply.daterangepicker', function (ev, picker) {
+                let from = picker.startDate.format('DD-MM-YYYY');
+                let to = picker.endDate.format('DD-MM-YYYY');
+                console.log(from);
+                console.log(to);
+                chosseaboutdaypicker(from, to);
+                $(this).val(picker.startDate.format('DD-MM-YYYY') + ' đến ' + picker.endDate.format('DD-MM-YYYY'));
+            });
+        });
+
+
+        // vẽ theo khoảng ngày
+        var chosseaboutday = function (item) {
+            $(item).closest('.list-item-sidebar').find('.active').removeClass('active');
+            $(item).addClass('active');
+            if ($(item).hasClass('custom-time')) {
+                $(item).siblings('input[name="daterangepicker"]').click();
+            }
+        }
+        var chosseaboutdaypicker = async function (from, to) {
+
+            $('.header-document').find('.title').text('Báo cáo doanh thu ' + ($('#sidebarclassify').find('.active').find('.text').text() + ' theo khoảng ngày').toLowerCase());
+            if (from !== null && to !== null) {
+                let fromTime = ConvertTime(from);
+                let toTime = ConvertTime(to);
+                console.log(from);
+                console.log(to);
+                console.log(fromTime);
+                console.log(toTime);
+
+                let rq = await fetch('/api/AdminReport/GetReportByAboutTime?from=' + fromTime + '&to=' + toTime, {
+                    method: 'get',
+                    headers: Enum.OptionAdminHeaderDefault
+                });
+                let rs = await rq.json();
+                if (AdminCheckErrorResponse(rs) === false) return;
+
+                if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                    console.log(rs.data);
+                    dataabouttime.Revenue = rs.data.TotalPrice;
+                    for (let index = 0; index < rs.data.ListReportAboutTime.length; index++) {
+                        let _item = rs.data.ListReportAboutTime[index];
+                        dataabouttime.listDataReport.push(
+                            {
+                                TableId: _item.Day + '-' + _item.Month + '-' + _item.Year,
+                                TableData: _item.TotalPrice
+                            });
+                    }
+                    paintingdocument(dataabouttime);
+                }
+            }
+        }
+
+
+        // hàm này vẽ lần đầu (Hoặc vẽ khi quay lại tab)
+        var showForInitPage = function () {
+            let datatime = $('#sidebartime').find('.active').data("time");
+            if (datatime === "") { alert("Có lỗi sảy ra khi tạo báo cáo !"); return; }
+            if ($('#sidebartime').find('.active').hasClass('custom-time')) {
+                let inputVal = $('#sidebartime').find('input[name="daterangepicker"]').val().replaceAll(' ', '');
+                inputVal = inputVal.split('đến');
+                chosseaboutdaypicker(inputVal[0], inputVal[1]);
+            } else {
+                paintingdocument(eval("data" + datatime))
+            }
+        }
+
+
+        // vẽ bảng (document)
+        var paintingdocument = function (datapaint) {
+            if ($('#sidebartime').find('.active').hasClass('custom-time')) {
+                $('.header-document').find('.title').text('Báo cáo doanh thu ' + ($('#sidebarclassify').find('.active').find('.text').text() + ' theo khoảng ngày').toLowerCase());
+                $('#documenttime').text('Thời gian : ' + $('input[name=daterangepicker]').val());
+            } else {
+                $('.header-document').find('.title').text('Báo cáo doanh thu ' + ($('#sidebarclassify').find('.active').find('.text').text() + ' ' + $('#sidebartime').find('.active').find('.text').text()).toLowerCase());
+                let datatime = $('#sidebartime').find('.active').data("time");
+                switch (datatime) {
+                    case 'thismonth':
+                        $('#documenttime').text('Thời gian : Tháng ' + (now.getMonth() + 1) + " năm " + now.getFullYear());
+                        break;
+                    case 'prevmonth':
+                        $('#documenttime').text('Thời gian : Tháng ' + (prevMonth.getMonth() + 1) + " năm " + prevMonth.getFullYear());
+                        break;
+                    case 'thisyear':
+                        $('#documenttime').text('Thời gian : Năm ' + now.getFullYear());
+                        break;
+                    case 'prevyear':
+                        $('#documenttime').text('Thời gian : Năm ' + prevYear.getFullYear());
+                        break;
+                }
+
+            }
+            $('#tabledocument').html('');
+            let html = '';
+
+            for (let index = 0; index < datapaint.listDataReport.length; index++) {
+                html += '<tr><td style="text-align:center">' + GetObjectProperty(datapaint.listDataReport[index], 'TableId') + '</td>';
+                html += '<td style="text-align:center">' + NumberFormat(datapaint.listDataReport[index].TableData) + '</td>';
+                html += '</tr>';
+            }
+            $('#tabledocument').append(html);
+
+            if (datapaint.Revenue === null) datapaint.Revenue = 0;
+            $('#total-revenue').text(NumberFormat(datapaint.Revenue));
+        }
+
+
+        var downloadExportFileExcel = async function () {
+            Loading.Show(2000);
+
+            let model = {
+                ListReportData: [],
+                Revenue: 0,
+                TypeReport: ''
+            };
+            let datatable = $('#tabledocument').find('tr');
+            for (let i = 0; i < datatable.length; i++) {
+                let datatablechild = $(datatable[i]).find('td');
+                model.ListReportData.push({
+                    Time: $(datatablechild[0]).text(),
+                    Price: $(datatablechild[1]).text()
+                });
+            }
+
+            model.Revenue = ($('#total-revenue').text());
+
+            let datatime = $('#sidebartime').find('.active').data("time");
+            switch (datatime) {
+                case 'thismonth':
+                    model.TypeReport = "Tháng " + (now.getMonth() + 1) + " năm " + now.getFullYear();
+                    break;
+                case 'prevmonth':
+                    model.TypeReport = "Tháng " + (prevMonth.getMonth() + 1) + " năm " + prevMonth.getFullYear();
+                    break;
+                case 'thisyear':
+                    model.TypeReport = "Năm " + now.getFullYear();
+                    break;
+                case 'prevyear':
+                    model.TypeReport = "Năm " + prevYear.getFullYear();
+                    break;
+            }
+
+            if (confirm("Xác nhận tải xuống !")) {
+                let rq = await fetch('/api/AdminReport/ExportFileExcelReport', {
+                    method: 'POST',
+                    headers: Enum.OptionAdminHeaderDefault,
+                    body: JSON.stringify(model)
+                });
+                let rs = await rq.blob();
+                var fileName = "Báo cáo doanh thu " + model.TypeReport + ".xlsx";
+                if (window.navigator.msSaveOrOpenBlob) {
+                    window.navigator.msSaveOrOpenBlob(rs, fileName);
+                } else {
+                    const a = document.createElement('a');
+                    document.body.appendChild(a);
+                    const url = window.URL.createObjectURL(rs);
+                    a.href = url;
+                    a.download = fileName;
+                    a.click();
+                    setTimeout(() => {
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                    }, 0)
+                }
+                alert("File của bạn đang được tải xuống !");
+            }
+        }
+    </script>
+
+}

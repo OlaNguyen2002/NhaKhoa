@@ -1,0 +1,37 @@
+﻿@using DentalClinic.Models;
+@{
+    ViewBag.Title = "About";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    SystemAbout systemAbout = (SystemAbout)ViewBag.SystemAbout;
+}
+@section Slider{
+    <!-- Banner Area -->
+    <div class="banner-area" data-background="/Content/assets/images/others/banner.jpg">
+        <div class="container h-100">
+            <div class="row h-100">
+                <div class="col-lg-12 my-auto text-center">
+                    <div class="banner-content">
+                        <h2 class="banner-title">Giới thiệu</h2>
+
+                        <div class="breadcrumb-container">
+                            <span><a href="index.html">Trang chủ</a></span>
+                            //
+                            <span class="current-item">Giới thiệu</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Banner Area End-->
+}
+<div class="card" style="width: 950px; margin: auto;">
+    <div class="card-body" style="padding: 20px 0;">
+        <h2>Giới thiệu về phòng khám Nha khoa Hữu Tuấn</h2>
+        <div class="container">
+             <div class="m-t-30">
+                <p>@Html.Raw(systemAbout.HtmlContents)</p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,300 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    ViewBag.Menu = "category";
+    ViewBag.SubMenu = "service-category";
+}
+
+@section styles{
+    <style>
+        .content {
+            background-color: white;
+            padding: 20px;
+        }
+
+        .title h1 {
+            text-align: center;
+        }
+
+        .btn {
+            width: fit-content;
+        }
+
+        .add-category {
+            margin-bottom: 10px;
+        }
+
+            .add-category .category-name {
+                font-size: 20px;
+            }
+
+        .add-category-btn {
+            color: white;
+            background-color: #8c237b;
+            border: solid #8c237b 1px;
+            border-radius: 5px;
+            padding: 3px;
+        }
+
+        .list-category {
+            margin-top: 20px;
+        }
+
+        .modal-update {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .modal-update-container {
+            background-color: #fff;
+            width: 500px;
+            max-width: calc(100% - 32px);
+            min-height: 200px;
+            position: relative;
+            animation: modalFadeIn ease 0.5s;
+        }
+
+        .modal-update-header {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .modal-update-footer {
+        }
+
+        .change-category {
+            width: 90%;
+            margin: auto;
+        }
+
+        .modal-update-footer {
+            width: 90%;
+            margin: auto;
+            justify-content: end;
+            display: flex;
+            gap: 10px;
+            padding-bottom: 10px;
+        }
+
+            .modal-update-footer .update-btn {
+                width: 100px;
+                padding: 5px 5px;
+                background-color: #435ebe;
+                color: white;
+                border-radius: 5px;
+                cursor: pointer;
+                border: solid #435ebe 1px;
+            }
+
+            .modal-update-footer .close-modal {
+                width: 80px;
+                color: black;
+                border: solid #ccc 0.5px;
+                cursor: pointer;
+                border-radius: 5px;
+            }
+
+        @@keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(200px);
+            }
+
+            to {
+                transform: translateY(0px);
+                opacity: 1;
+            }
+        }
+        .form-add {
+            display: flex;
+        }
+
+        .check-show-in-home-page {
+            flex: 1;
+            padding-top: 40px;
+            padding-left: 20px;
+            font-size: 18px;
+        }
+    </style>
+}
+<div class="content">
+    <div class="create-product-category">
+        <div class="title"> <h1>Thêm danh mục Dịch vụ</h1></div>
+        <div class="body">
+
+            <div class="form-add">
+                <div class="form-group add-category" id="" style="flex: 2;">
+                    <label class="font-weight-semibold category-name" for="name">Tên danh mục</label>
+                    <input type="text" class="form-control" id="Name" placeholder="Nhập tên danh mục cần tạo" required>
+                </div>
+                <div class="check-show-in-home-page">
+                    <input type="checkbox" id="showInHomePage" name="">
+                    <label for=""> Hiển thị ở trang chủ</label>
+                </div>
+            </div>
+
+            <button type="button" onclick="CreateServiceCategory();" class="btn btn-primary">Thêm</button>
+        </div>
+    </div>
+    <div class="list-data list-category">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Tên danh mục</th>
+                        <th scope="col">Hoạt động</th>
+                    </tr>
+                </thead>
+                <tbody id="list-category">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div id="modal-update" class="modal-update">
+    <div class="modal-update-container">
+        <div class="modal-update-header">Cập nhật danh mục</div>
+        <div class="change-category">
+
+        </div>
+
+        <div class="modal-update-footer">
+            <button class="btn btn-primary" onclick="UpdateServiceCategory()">Cập nhật</button>
+            <button class="close-modal" onclick="closeModal()">Đóng</button>
+        </div>
+        <input name="name" value="" style="display:none" />
+    </div>
+
+</div>
+
+
+
+@section scripts{
+    <script>
+        async function GetListServiceCategory() {
+            let rp = await fetch('/api/AdminServiceCategory/GetListServiceCategory', {
+                method: 'get',
+                headers: Enum.OptionAdminHeaderDefault
+            });
+            let rs = await rp.json();
+            if (AdminCheckErrorResponse(rs) === false) return;
+            for (let index = 0; index < rs.data.length; index++) {
+                var x = rs.data[index]
+                $('#list-category').append(`<tr>
+                                                <td>${x.Name}</td>
+                                                <td style="" >
+                                                     <a data-id="${x.ServiceCategoryId}" data-label="${x.Name}" data-showInHomePageUpdate=${x.ShowInHomePage} onclick="openUpdateModal(this);">
+                                                        <button class="btn btn-primary  btn-xs">
+                                                            <i class="fa-solid fa-pen-to-square"></i>
+                                                        </button>
+                                                    </a>
+                                                     <a data-id="${x.ServiceCategoryId}" onclick="Delete(this);">
+                                                        <button class="btn btn-danger  btn-xs">
+                                                            <i class="fa fa-trash" aria-hidden="true"></i>
+                                                        </button>
+
+                                                    </a>
+                                                </td>
+                                                </tr>`)
+            }
+        }
+
+        const openUpdateModal = function (el) {
+            let id = $(el).data('id');
+            let name = $(el).data('label');
+            let check = $(el).data('showinhomepageupdate');
+            $('.change-category').html('');
+            $('.change-category').append(`<form>
+                    <div class="form-group">
+                        <label for="category-name">Tên danh mục</label>
+                        <div>
+                                <input type="text" class="form-control" id="category-name" placeholder="Tên danh mục" value="${name}">
+                                <input type="checkbox" id="showInHomePageUpdate" name="" ${check === true ? 'checked="true"' : ''}>
+                                <label for=""> Hiển thị ở trang chủ</label>
+                        </div>
+                         <input type="text" class="form-control" id="category-id" value="${id}" style="display:none">
+                    </div>
+                </form>`)
+            $('#modal-update').css('display', 'flex');
+        }
+        const closeModal = function () {
+            $('#modal-update').css('display', 'none');
+        }
+        const UpdateServiceCategory = async function () {
+            if (confirm('Bạn có chắc muốn cập nhật danh mục này?')) {
+                let model = {
+                    Name: $('#category-name').val(),
+                    ServiceCategoryId: $('#category-id').val(),
+                    ShowInHomePage: $('#showInHomePageUpdate').is(":checked")
+                };
+                if (model.Name !== '') {
+                    const rp = await fetch('/api/AdminServiceCategory/UpdateServiceCategory', {
+                        method: 'post',
+                        headers: Enum.OptionAdminHeaderDefault,
+                        body: JSON.stringify(model)
+                    });
+                    let rs = await rp.json();
+                    if (AdminCheckErrorResponse(rs) === false) return;
+                    if (rs.status === 'error') if (rs.message !== '' && rs.message !== null) alert(rs.message);
+                    if (rs.status === 'success') {
+                        if (rs.message !== '' && rs.message !== null) alert(rs.message);
+                        window.location.reload();
+                    }
+                }
+            }
+        }
+        const Delete = async function (el) {
+            if (confirm('Bạn có chắc muốn xóa danh mục này?')) {
+                let id = $(el).data('id');
+                let rp = await fetch('/api/AdminServiceCategory/DeleteServiceCategory?ServiceCategoryId=' + id, {
+                    method: 'get',
+                    headers: Enum.OptionAdminHeaderDefault
+                });
+                let rs = await rp.json();
+                if (AdminCheckErrorResponse(rs) === false) return;
+                if (rs.status === 'error') if (rs.message !== '' && rs.message !== null) alert(rs.message);
+                if (rs.status === 'success') {
+                    if (rs.message !== '' && rs.message !== null) alert(rs.message);
+                    window.location.reload();
+                }
+            }
+        }
+        const CreateServiceCategory = async function () {
+            let model = {
+                Name: $('#Name').val(),
+                ShowInHomePage: $('#showInHomePage').is(":checked")
+            };
+           
+            if (model.Name !== '') {
+                const rp = await fetch('/api/AdminServiceCategory/InsertServiceCategory', {
+                    method: 'post',
+                    headers: Enum.OptionAdminHeaderDefault,
+                    body: JSON.stringify(model)
+                });
+                let rs = await rp.json();
+                if (AdminCheckErrorResponse(rs) === false) return;
+                if (rs.status === 'error') if (rs.message !== '' && rs.message !== null) alert(rs.message);
+                if (rs.status === 'success') {
+                    if (rs.message !== '' && rs.message !== null) alert(rs.message);
+                    window.location.reload();
+                }
+            } else { alert('Bạn chưa nhập tên danh mục!'); return; }
+        }
+        GetListServiceCategory();
+    </script>
+}
+
+

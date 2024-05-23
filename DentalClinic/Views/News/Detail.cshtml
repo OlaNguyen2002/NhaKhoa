@@ -1,0 +1,94 @@
+﻿@using DentalClinic.Models;
+@using DentalClinic.Providers;
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    News newsUpdate = (News)ViewBag.News;
+    List<News> lsnewsUpdates = (List<News>)ViewBag.ListRelatedNews;
+}
+
+@section styles{
+    <style>
+        .row .related-news {
+            padding-bottom: 10px;
+            padding-top: 5px;
+            border-bottom: 1px solid #e2e2e2;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+    </style>
+}
+@section Slider{
+    <!-- Banner Area -->
+    <div class="banner-area" data-background="/Content/assets/images/others/banner.jpg">
+        <div class="container h-100">
+            <div class="row h-100">
+                <div class="col-lg-12 my-auto text-center">
+                    <div class="banner-content">
+                        <h2 class="banner-title">Tin tức</h2>
+
+                        <div class="breadcrumb-container">
+                            <span><a href="/tin-tuc/danh-sach?page=1">Tin tức</a></span>
+                            //
+                            <span class="current-item">Chi tiết tin tức</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Banner Area End-->
+}
+<div class="card" style="width: 950px; margin: auto;">
+    <div class="card-body" style="padding: 20px 0;">
+        <div class="container">
+            <h2 class="font-weight-normal m-b-10">@newsUpdate.Title</h2>
+            <div class="d-flex m-b-30">
+
+                <div class="m-l-15">
+                    <p class="m-b-0 text-muted font-size-13">@HelperProvider.GetDateTime(newsUpdate.CreateTime).ToString("dd/MM/yyyy")</p>
+                </div>
+            </div>
+            <img alt="" class="img-fluid w-100" src="assets/images/others/img-8.jpg">
+            <div class="m-t-30">
+                <p>@Html.Raw(newsUpdate.NewsContent)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row section-news" style="width: 950px; margin: auto;">
+    <div class="mx-auto" style="padding:10px">
+        <div class="related-news">
+            <div class="header-news">
+                Tin tức có thể bạn quan tâm
+            </div>
+            <a href="/tin-tuc/danh-sach?page=1" class="see-more">
+                Xem nhiều hơn
+            </a>
+        </div>
+        <div class="row more-news">
+            @for (int index = 0; index < lsnewsUpdates.Count; index++)
+            {
+                <a class="col-md-4 news-des" href="/tin-tuc/bai-viet/@HelperProvider.CreateSlugFromTitle(lsnewsUpdates[index].Title)/@lsnewsUpdates[index].NewsId">
+                    <div class="card">
+                        <img class="card-img-top img-fix" src="@lsnewsUpdates[index].Thumbnail" alt="">
+                        <div class="card-body">
+                            <h4 class="m-t-10 title">@lsnewsUpdates[index].Title</h4>
+                            <p class="m-b-20 description">@lsnewsUpdates[index].Description</p>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <p class="m-b-0 font-weight-semibold font-size-15" style="color:gray">@HelperProvider.GetDateTime(lsnewsUpdates[index].CreateTime).ToString("dd/MM/yyyy")</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+
+

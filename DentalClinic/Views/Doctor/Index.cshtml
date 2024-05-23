@@ -1,0 +1,133 @@
+﻿@using DentalClinic.Models;
+@using DentalClinic.Providers;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    DoctorListViewModel doctorListViewModel = (DoctorListViewModel)ViewBag.ListDoctor;
+}
+
+@section Slider{
+    <!-- Banner Area -->
+    <div class="banner-area" data-background="/Content/assets/images/others/banner.jpg">
+        <div class="container h-100">
+            <div class="row h-100">
+                <div class="col-lg-12 my-auto text-center">
+                    <div class="banner-content">
+                        <h2 class="banner-title">Bác sĩ</h2>
+
+                        <div class="breadcrumb-container">
+                            <span><a href="/">Trang chủ</a></span>
+                            //
+                            <span class="current-item">Bác sĩ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Banner Area End-->
+}
+<!-- Site Content Wrapper -->
+<div class="site-content">
+
+    <!-- Content Area-->
+    <div class="content-area">
+        <!-- Doctors Section -->
+        <section class="wrd-doctors-section">
+            <div class="wrd-specialist wrd-team-layout-two">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="wrd-section-title-wrapper">
+                                <div class="wrd-section-title-content wrd-secondary-font">
+                                    <div class="wrd-section-title-bg-text">Bác sĩ</div>
+                                    <div class="wrd-section-title">
+                                        <h2>Đội ngũ bác sĩ hàng đầu</h2>
+                                    </div>
+                                    <div class="title-bottom-line" data-background="/Content/assets/images/others/line.png"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        @for (int index = 0; index < doctorListViewModel.ListDoctor.Count; index++)
+                        {
+                            <div class="col-xl-3 col-lg-4 col-md-6">
+                                <div class="wrd-single-team-member">
+                                    <div class="member-image-wrapper">
+                                        <a class="wrd-member-details-url" href="/bac-si/bai-viet/@HelperProvider.CreateSlugFromTitle(doctorListViewModel.ListDoctor[index].Name)/@doctorListViewModel.ListDoctor[index].DoctorId">
+                                            @*<div class="wrd-member-btn-text wrd-team-two-plus-button">
+                                                <i class="flaticon-plus-1"></i>
+                                            </div>*@
+
+                                            <div class="member-image">
+                                                <img src="@doctorListViewModel.ListDoctor[index].Avatar" alt="Team" title="team-member-1" style="height: 300px; max-width: 100%; object-fit: cover;">
+                                            </div>
+                                        </a>
+                                    </div>
+
+                                    <div class="wrd-member-content">
+                                        <a href="/bac-si/bai-viet/@HelperProvider.CreateSlugFromTitle(doctorListViewModel.ListDoctor[index].Name)/@doctorListViewModel.ListDoctor[index].DoctorId">
+                                            <h3 class="wrd-member-name">@doctorListViewModel.ListDoctor[index].Name</h3>
+                                        </a>
+                                        <span class="wrd-member-designation wrd-secondary-font">@Html.Raw(doctorListViewModel.ListDoctor[index].Qualification)</span>
+                                    </div>
+
+                                    <div class="wrd-team-member-social">
+                                        <ul class="wrd-list-style wrd-list-inline">
+                                            <li>
+                                                <a target="_blank" href="#"><i class="fab fa-facebook-f"></i></a>
+                                            </li>
+
+                                            <li>
+                                                <a target="_blank" href="#"><i class="fab fa-twitter"></i></a>
+                                            </li>
+
+                                            <li>
+                                                <a target="_blank" href="#"><i class="fab fa-linkedin-in"></i></a>
+                                            </li>
+
+                                            <li>
+                                                <a target="_blank" href="#"><i class="fab fa-pinterest-p"></i></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Doctors Section End -->
+    </div><!-- Content Area End-->
+</div><!-- Site Content Wrapper End -->
+
+
+<div class="m-t-30">
+    <nav class="mg-bottom" style="margin-bottom: 20px;">
+        <ul class="pagination justify-content-center">
+            <li class="page-item"><a class="page-link page-previous" href="#">Trước</a></li>
+            @for (int index = 1; index <= doctorListViewModel.TotalPage; index++)
+            {
+                <li class="page-item @(ViewBag.page == index ? "active":"" ) "><a class="page-link" href="/bac-si/danh-sach?page=@index">@index</a></li>
+            }
+            <li class="page-item"><a class="page-link page-next" href="#">Sau</a></li>
+        </ul>
+    </nav>
+</div>
+
+@section scripts{
+    <script>
+        var getvalueActive = function () {
+           var numberpage = window.location.href.split('/bac-si/danh-sach?page=')[1];
+           if (parseInt(numberpage) > 1) {
+               $('.page-previous').attr('href', `/bac-si/danh-sach?page=${parseInt(numberpage) - 1}`);
+           }
+           if (parseInt(numberpage) < parseInt('@doctorListViewModel.TotalPage')) {
+               $('.page-next').attr('href', `/tin-tuc/danh-sach?page=${parseInt(numberpage) + 1}`);
+           }
+       }
+       getvalueActive();
+    </script>
+}

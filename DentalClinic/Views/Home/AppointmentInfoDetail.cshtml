@@ -1,0 +1,118 @@
+﻿
+@{
+    ViewBag.Title = "AppointmentInfoDetail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <style>
+        .cart-index {
+            background-color: white;
+            margin: 10px 0;
+            border-radius: 10px;
+            padding: 10px;
+            width: 950px;
+            margin: auto;
+        }
+
+        .total-price-header-order {
+            color: #d52222;
+            
+        }
+
+        .table-hover > tbody > tr:hover {
+            cursor: pointer;
+        }
+    </style>
+}
+
+<div class="cart-index">
+        <div class="cart-body">
+            <div class="table-responsive">
+                <h2 style="text-align: center; padding-bottom: 30px;">Chi tiết lịch hẹn</h2>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width:30%">Dịch vụ</th>
+                            <th style="width:35%;text-align:center" colspan="1">Thời gian dự kiến (phút)</th>
+                            <th style="width:35%" >Đơn giá</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appointment-detail">
+                    </tbody>
+                </table>
+            </div>
+            <div class="list-order-info"  style="display:flex; justify-content: flex-end;">
+                <div class="item-order-info">
+                    <div class="header-order-info">
+                        @*<div class="item-payment-order total-amount-order">
+                            <div class="title-header-order">
+                                Tổng dịch vụ
+                            </div>
+                            <div class="total-price-header-order" id="SumTotalPrice">
+                            </div>
+                        </div>*@
+                        <div class="item-payment-order total-payment-order" style="display: flex; gap: 10px; padding-right: 215px;">
+                            <div class="title-header-order" style="font-size: 18px; font-weight: 600;">
+                                Tổng dịch vụ
+                            </div>
+                            <div class="total-price-header-order" id="SumTotalPrice">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+@section Scripts{
+    <script>
+            $('#start-date').datepicker({
+                format: 'dd-mm-yyyy'
+            });
+
+            $('#end-date').datepicker({
+                format: 'dd-mm-yyyy'
+            });
+
+
+
+            const GetAppointmentDetailUser = async function () {
+                let appointmentCode = '@ViewBag.id';
+
+                let rq = await fetch(Enum.ApiUrl + '/api/UserAppointment/GetAppointmentDetailOfUSer?appointmentCode=' + appointmentCode, {
+                    method: 'get',
+                    headers: Enum.OptionHeaderDefault
+                });
+                let rs = await rq.json();
+                console.log(rs)
+                if (CheckErrorResponse(rs) === false) return;
+                $('#appointment-detail').html('')
+                if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                    for (let index = 0; index < rs.data.listUserAppointmentService.length; index++) {
+                        var x = rs.data.listUserAppointmentService[index];
+                        let html = '<tr>';
+                        html += '<td>';
+                        html += '<div class="text-item-product-payment" >' + x.NameService +'</div></td>';
+                        html += '<td>';
+                        html += '<div class="number-item-product-payment" style="text-align:center" >' + NumberFormat(x.ExpectTime) + '</div></td>';
+                        html += `<td style="align-item: right;"><div style="display:flex;"><div class="price-item-product-payment" data-price="${x.PriceService}">${NumberFormat(x.PriceService)} đ</div></div></td>`;
+                        html += '</tr>';
+                        $('#appointment-detail').append(html);
+                    }
+                }
+                let listPrice = $('#appointment-detail').find('.price-item-product-payment');
+                let totalPrice = 0;
+                for (let i = 0; i < listPrice.length; i++) {
+                    totalPrice += parseInt($(listPrice[i]).data('price'));
+                }
+                $('#SumTotalPrice').html(NumberFormat(totalPrice) + ' <sup>VNĐ</sup>');
+            }
+
+        GetAppointmentDetailUser();
+
+        </script>
+}
+
+

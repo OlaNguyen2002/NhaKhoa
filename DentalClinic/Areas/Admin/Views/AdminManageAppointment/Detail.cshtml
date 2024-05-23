@@ -1,0 +1,298 @@
+﻿
+@{
+    ViewBag.Title = "Detail";
+    ViewBag.Menu = "manage-appointment";
+}
+
+@section styles{
+    <style>
+
+
+        .header-order-info {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .body-order-info {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+            .body-order-info .row-table {
+                display: flex;
+                gap: 5px;
+            }
+
+                .body-order-info .row-table .row-table-title {
+                    min-width: 140px;
+                }
+
+                .body-order-info .row-table .row-table-value {
+                    flex: 1;
+                }
+
+        .totalMoney {
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+            margin-right: 50px;
+        }
+
+            .totalMoney .title-header-order {
+                font-size: 18px;
+            }
+
+            .totalMoney .total-price-header-order {
+                font-size: 18px;
+                color: red;
+            }
+    </style>
+}
+
+<input id="UserAppointmentId" value="@ViewBag.UserAppointmentId" type="hidden" />
+<div class="card">
+    <h4 style="text-align: center; padding-top: 20px;">Nha khoa Hữu Tuấn</h4>
+    <h6 style="text-align: center;">Địa chỉ: Số 16, ngách 2, ngõ 343, phố Đội Cấn, P. Liễu Giai, Q. Ba Đình, TP Hà Nội</h6>
+    <div class="cart-index">
+        <div class="cart-body">
+            <div class="list-order-info">
+                <div class="item-order-info">
+                    <div class="body-order-info">
+                        <div class="table-left-order">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="row-table">
+                                                <div class="row-table-title">Họ và tên:</div>
+                                                <div class="row-table-value" id="ReceiverName"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="row-table">
+                                                <div class="row-table-title">Số điện thoại:</div>
+                                                <div class="row-table-value" id="PhoneNum"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="row-table">
+                                                <div class="row-table-title">Email:</div>
+                                                <div class="row-table-value" id="ReceiverEmail"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="row-table">
+                                                <div class="row-table-title">Địa chỉ:</div>
+                                                <div class="row-table-value" id="ReceiverAddr"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="header-order-info">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="row-table">
+                                                <div class="row-table-title">Mã lịch hẹn:</div>
+                                                <div class="row-table-value" id="AppointmentCode"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="row-table">
+                                                <div class="row-table-title">Thời gian hẹn:</div>
+                                                <div class="row-table-value" id="Date"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 100px;">STT</th>
+                            <th style="">Dịch vụ</th>
+                            <th style="width:250px; padding-left: 60px;">Đơn giá (VNĐ)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order-detail">
+                    </tbody>
+                </table>
+            </div>
+            <div class="totalMoney">
+                <div class="title-header-order" style="font-weight:bold">Tổng tiền:</div>
+                <div class="total-price-header-order" id="SumTotalPrice">
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div style="display: flex; justify-content: flex-end;"><button class="btn btn-primary" onclick="ExportPdfOrder();">In hóa đơn</button></div>
+@*<div style="display: flex; justify-content: flex-end;"><button class="btn btn-primary" onclick="ExportOrder();">In hóa đơn</button></div>*@
+@section Scripts{
+    <script>
+        let userAppointmentInfo = {
+            Name: '',
+            Phone: '',
+            Email: '',
+            AppointmentCode: '',
+            Hour: 0,
+            Day: 0,
+            TotalAmount: 0
+        };
+        let listServiceDental = [];
+
+        const GetListAppointmentDetailUser = async function () {
+            
+            let userAppointmentId ='@ViewBag.UserAppointmentId';
+            let rq = await fetch(Enum.ApiUrl + '/api/AdminManageAppointment/GetAppointmentDetail?userAppointmentId=' + userAppointmentId, {
+                method: 'get',
+                headers: Enum.OptionAdminHeaderDefault
+            });
+            let rs = await rq.json();
+            console.log(rs);
+            userAppointmentInfo = {
+                Name: rs.data.userAppointment.Name,
+                Phone: rs.data.userAppointment.Phone,
+                Email: rs.data.userAppointment.Email,
+                AppointmentCode: rs.data.userAppointment.AppointmentCode,
+                Hour: rs.data.userAppointment.Hour,
+                Day: rs.data.userAppointment.Day,
+                TotalAmount: rs.data.userAppointment.TotalAmount
+            }
+            debugger;
+            if (CheckErrorResponse(rs) === false) return;
+            $('#order-detail').html('')
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+
+                for (let index = 0; index < rs.data.listUserAppointmentDetail.length; index++) {
+                    var x = rs.data.listUserAppointmentDetail[index];
+                    let html = '<tr>';
+                    html += `<td>${index + 1}</td>`;
+                    html += '<td><div class="text-item-product-payment" >' + x.NameService +'</div></td>';
+                    html += '<td><div class="show-number-item-product-payment">';
+                    html += '<div class="number-item-product-payment" style="text-align:center">' + NumberFormat(x.PriceService) + '</div></div></td>';
+                    html += '</div></td></tr>';
+
+                    $('#order-detail').append(html);
+                    let serviceDetail = {
+                        Name: x.NameService,
+                        Price: x.PriceService
+                    };
+
+                    listServiceDental.push(serviceDetail);
+                }
+                $('#ReceiverName').html(rs.data.userAppointment.Name);
+                $('#PhoneNum').html(rs.data.userAppointment.Phone);
+                $('#ReceiverEmail').html(rs.data.userAppointment.Email);
+                $('#ReceiverAddr').html(rs.data.userAppointment.Address);
+                $('#AppointmentCode').html(rs.data.userAppointment.AppointmentCode);
+                $('#Date').html(rs.data.userAppointment.Hour + ':' + (rs.data.userAppointment.Minute === 0 ? '00' : rs.data.userAppointment.Minute) + ' ' + rs.data.userAppointment.Day + '/' + rs.data.userAppointment.Month + '/' + rs.data.userAppointment.Year);
+                $('#SumTotalPrice').html(NumberFormat(rs.data.userAppointment.TotalAmount) + ' <sup>VNĐ<sup>');
+            }
+        }
+
+
+
+        const initPage = async function () {
+            GetListAppointmentDetailUser();
+        }
+
+        initPage();
+
+        var ExportOrder = async function () {
+
+            let model = {
+                UserAppointmentInfo: userAppointmentInfo,
+                ListServiceDental: listServiceDental
+               
+            };
+
+            if (confirm("Xác nhận xuất hóa đơn !")) {
+                let rq = await fetch('/api/AdminManageAppointment/ExportFileExcelOrder', {
+                    method: 'POST',
+                    headers: Enum.OptionAdminHeaderDefault,
+                    body: JSON.stringify(model)
+                });
+                let rs = await rq.blob();
+                var fileName = "Thông tin hóa đơn mã " + model.UserAppointmentInfo.AppointmentCode + ".xlsx";
+                if (window.navigator.msSaveOrOpenBlob) {
+                    window.navigator.msSaveOrOpenBlob(rs, fileName);
+                } else {
+                    const a = document.createElement('a');
+                    document.body.appendChild(a);
+                    const url = window.URL.createObjectURL(rs);
+                    a.href = url;
+                    a.download = fileName;
+                    a.click();
+                    setTimeout(() => {
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                    }, 0)
+                }
+                alert("Hóa đơn đang được tải xuống !");
+            }
+        }
+
+        const ExportPdfOrder = async function () {
+            let model = {
+                UserAppointmentInfo: userAppointmentInfo,
+                ListServiceDental: listServiceDental
+            };
+
+            if (confirm("Xác nhận xuất hóa đơn !")) {
+                let rq = await fetch('/api/AdminManageAppointment/ExportPdf', {
+                    method: 'POST',
+                    headers: Enum.OptionAdminHeaderDefault,
+                    body: JSON.stringify(model)
+                });
+                let rs = await rq.blob();
+                console.log(rs);
+                var fileName = "Thông tin hóa đơn mã " + model.UserAppointmentInfo.AppointmentCode + ".pdf";
+                console.log(fileName);
+                if (window.navigator.msSaveOrOpenBlob) {
+                    window.navigator.msSaveOrOpenBlob(rs, fileName);
+                } else {
+                    const a = document.createElement('a');
+                    document.body.appendChild(a);
+                    const url = window.URL.createObjectURL(rs);
+                    a.href = url;
+                    a.download = fileName;
+                    a.click();
+                    setTimeout(() => {
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                    }, 0)
+                }
+                alert("Hóa đơn đang được tải xuống !");
+
+            }
+        }
+    </script>
+}
+

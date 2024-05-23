@@ -1,0 +1,200 @@
+﻿
+@{
+    ViewBag.Title = "Danh sách tin tức";
+    ViewBag.Menu = "manage-content";
+    ViewBag.SubMenu = "manage-news";
+}
+
+@section styles{
+    <style>
+        table .table-news {
+            width: 100%;
+        }
+
+        .table-news thead tr th {
+            padding: 0 10px;
+        }
+
+        .table-news tbody tr th {
+            padding: 7px 10px;
+        }
+
+        .table-news tbody tr {
+            border-top: 1px solid #435ebe;
+        }
+
+        .button-icon {
+            display: flex;
+            padding: 5px 5px;
+        }
+
+        .preview {
+            width: 100px;
+            height: 100px;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            border: .5px solid #d7d7d7;
+            cursor: pointer;
+        }
+
+        .news-page-list {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+            .news-page-list > a {
+                width: 25px;
+                height: 25px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 100%;
+                font-size: 13px;
+            }
+
+            .news-page-list .news-page.active {
+                background-color: #3f87f5;
+                color: white;
+            }
+
+        .card .pro-search {
+            padding: 20px;
+            display: flex;
+        }
+
+            .card .pro-search .search-keyword {
+                width: 400px;
+                margin-right: 20px;
+            }
+    </style>
+
+}
+
+<div class="card">
+    <div class="pro-search">
+        <div class="search-keyword" id="email-form">
+            <input type="text" class="form-control" id="keyword" placeholder="Nhập từ khoá tìm kiếm" onkeypress="SearchKeyPress(event);">
+        </div>
+        <a class="btn btn-primary" onclick="SearchNews();">Tìm kiếm</a>
+    </div>
+    <div class="list-data" style="padding:20px;">
+
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th style="width: 20%;" id="Thumbnail">Thumbnail</th>
+                    <th style="width: 35%;" id="Title">Tiêu đề</th>
+                    <th style="width: 35%;" id="DescriptionRow">Mô tả</th>
+                    <th style="width: 10%; text-align: right;"><button class="btn btn-primary" onclick="AddNews();">Thêm</button></th>
+                </tr>
+            </thead>
+            <tbody id="list-news">
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<div class="news-page-list">
+</div>
+
+
+
+@section scripts{
+    <script>
+        const OpenModal = function () {
+            $('#modal-insert').css('display', 'flex');
+        }
+        const LoadListNews = async function (page = 1) {
+            _currentPage = page;
+
+            var keyword = $('.search-keyword').find('input').val();
+            const rq = await fetch('/api/AdminNews/GetListNews?page=' + page + '&keyword=' + keyword, {
+                method: 'get',
+                headers: Enum.OptionAdminHeaderDefault
+            });
+            const rs = await rq.json();
+            if (CheckErrorResponse(rs) === false) return;
+            console.log(rs);
+
+            $('.news-page-list').html('');
+            for (let page = 1; page <= rs.data.TotalPage; page++) {
+                $('.news-page-list').append(`<a onclick="LoadListNews(${page});" data-page="${page}" class="news-page ${_currentPage === page ? 'active' : ''}" id="page-num">${page}</a>`);
+            }
+            $("#list-news").html('')
+            for (let i = 0; i < rs.data.ListNews.length; i++) {
+                $('#list-news').append(`<tr>
+                                    <td><div class="preview" style="background-image:url(${rs.data.ListNews[i].Thumbnail})"></div></td>
+                                    <td>${rs.data.ListNews[i].Title}</td>
+                                    <td>${rs.data.ListNews[i].Description}</td>
+                                    <td>
+                                        <div class="button-icon">
+                                            <a><button class="btn btn-primary" style="margin-right:7px;" data-id="${rs.data.ListNews[i].NewsId}" onclick="UpdateNews(this);"><i class="fa-regular fa-pen-to-square"></i></button></a>
+                                            <a><button class="btn btn-danger" data-id="${rs.data.ListNews[i].NewsId}" onclick="DeleteNews(this);"><i class="fa-solid fa-trash"></i></button></a>
+                                        </div>
+
+                                    </td>
+                            </tr>`)
+            }
+        }
+
+        const LoadDataNews = async function (el) {
+            const id = $(el).data('id');
+
+            //lay du lieu tu api
+            const rq = await fetch('/api/AdminNews/GetNewsById?id=' + id);
+
+            const rs = await rq.json();
+
+            if (CheckErrorResponse(rs) === false) return;
+            $('#Thumbnail').val(rs.data.Thumbnail);
+            $('#Title').val(rs.data.Title);
+            $('#DescriptionRow').val(rs.data.Description);
+
+
+        }
+
+
+        const AddNews = async function () {
+            window.location.href = ('/admin/ManageNews/AddNews/');
+        }
+
+        const UpdateNews = async function (el) {
+            let id = $(el).data('id');
+            window.location.href = ('/admin/ManageNews/UpdateNews?id=' + id);
+            if (rs.status === 'error') if (rs.message !== '' && rs.message !== null) alert(rs.message);
+            if (rs.status === 'success') {
+                if (rs.message !== '' && rs.message !== null) alert(rs.message);
+            }
+        }
+        const DeleteNews = async function (el) {
+            if (confirm('Bạn có chắc muốn xóa tin tức này?')) {
+                let id = $(el).data('id');
+                let rp = await fetch('/api/AdminNews/DeleteNews?newsId=' + id, {
+                    method: 'get',
+                    headers: Enum.OptionAdminHeaderDefault
+                });
+                let rs = await rp.json();
+
+                if (rs.status === 'error') if (rs.message !== '' && rs.message !== null) alert(rs.message);
+                if (rs.status === 'success') {
+                    if (rs.message !== '' && rs.message !== null) alert(rs.message);
+                    alert('Xoá tin tức này thành công');
+                    window.location.reload();
+                }
+            }
+        }
+        LoadListNews();
+        const SearchNews = function () {
+            LoadListNews();
+        }
+
+        const SearchKeyPress = function (event) {
+            if (event.keyCode == 13) {
+                LoadListNews();
+            }
+        }
+    </script>
+}

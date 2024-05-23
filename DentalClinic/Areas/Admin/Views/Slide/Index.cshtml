@@ -1,0 +1,349 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    ViewBag.Menu = "manage-content";
+    ViewBag.SubMenu = "manage-slide";
+}
+
+@section styles{
+    <style>
+        table .table-slide {
+            width: 100%;
+        }
+
+        .table-slide thead tr th {
+            padding: 0 10px;
+        }
+
+        .table-slide tbody tr th {
+            padding: 7px 10px;
+        }
+
+        .table-slide tbody tr {
+            border-top: 1px solid #435ebe;
+        }
+
+        .button-icon {
+            display: flex;
+            padding: 5px 5px;
+        }
+
+        .preview {
+            width: 100px;
+            height: 100px;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            border: .5px solid #d7d7d7;
+            cursor: pointer;
+        }
+
+        .modal-custom {
+            display: flex;
+            position: fixed;
+            background-color: #00000060;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .modal-custom .modal-slide {
+                background-color: #fff;
+                padding: 20px;
+                width: 650px;
+                height: 400px;
+            }
+
+        .form-item {
+            padding-left: 20px;
+        }
+
+            .form-item input {
+                width: 100%;
+            }
+
+        .modal-form h2 {
+            padding-bottom: 20px;
+            text-align: center;
+        }
+
+        .bottom-form {
+            display: flex;
+            justify-content: flex-end;
+            padding-top: 20px;
+        }
+
+        .slide-page-list {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+            .slide-page-list > a {
+                width: 25px;
+                height: 25px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 100%;
+                font-size: 13px;
+            }
+
+            .slide-page-list .slide-page.active {
+                background-color: #3f87f5;
+                color: white;
+            }
+
+        .card .pro-search {
+            padding: 20px;
+            display: flex;
+        }
+
+            .card .pro-search .search-keyword {
+                width: 400px;
+                margin-right: 20px;
+            }
+    </style>
+
+}
+<div class="card">
+    <div class="pro-search">
+        <div class="search-keyword" id="email-form">
+            <input type="text" class="form-control" id="keyword" placeholder="Nhập từ khoá tìm kiếm" onkeypress="SearchKeyPress(event);">
+        </div>
+        <a class="btn btn-primary" onclick="SearchSlide();">Tìm kiếm</a>
+    </div>
+    <div class="list-slide" style="padding:20px;">
+
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th style="width: 20%;" id="ImageSlide">Ảnh Slide</th>
+                    <th style="width: 35%;">Link Web</th>
+                    <th style="width: 30%;">Vùng hiển thị</th>
+                    <th style="width: 10%; text-align: right;"><button class="btn btn-primary" onclick="OpenAddSlide();">Thêm</button></th>
+                </tr>
+            </thead>
+            <tbody id="list-slide">
+            </tbody>
+        </table>
+
+    </div>
+</div>
+<div class="slide-page-list">
+</div>
+
+<div class="modal-custom" id="modal-slide" style="display: none;">
+    <input id="SlideId" type="hidden" />
+    <div class="modal-slide">
+        <div class="modal-form">
+            <h2>CẬP NHẬT SLIDE</h2>
+            <div class="form-group" style="display: flex;">
+                <div class="preview-insert">
+                    <div class="preview" style="width: 200px; height: 200px; background-position: center; background-repeat: no-repeat; background-size: cover; border: .5px solid #d7d7d7; cursor: pointer; background-image: url('/Content/img/pick-image.png');" onclick="ChooseThumbnail(this);"></div>
+                    <input type="file" style="display: none;" onchange="ChooseThumbnail_OnChange(this);" required />
+                    <input type="hidden" id="Image" />
+                </div>
+                <div style="display: flex; flex-direction: column; flex: 1;">
+                    <div class="form-item" style="padding-bottom: 10px;">
+                        <label class="font-weight-semibold" for="name">Link Web</label>
+                        <input type="text" class="form-control" id="LinkWeb" -1placeholder="Nhập link web chuyển đến khi nhấn vào slide" required>
+                    </div>
+                    <div class="form-item">
+                        <label class="font-weight-semibold" for="name">Vùng hiển thị</label>
+                        <select class="form-control" id="area">
+                            <option value="home-slide">Home Slide</option>
+                            <option value="banner-1">Banner</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-form">
+                <button class="btn btn-danger" style="margin-right: 20px;" onclick="CloseSlide();">Đóng</button>
+                <button class="btn btn-primary" onclick="SaveSlide();">Lưu</button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section scripts{
+    <script>
+        let isUpdate = false;
+        let _currentPage = 1;
+        const LoadListSlide = async function (page = 1) {
+            _currentPage = page;
+
+            var keyword = $('.search-keyword').find('input').val();
+            const rq = await fetch('/api/AdminSlide/GetListSlide?page=' + page + '&keyword=' + keyword, {
+                method: 'get',
+                headers: Enum.OptionAdminHeaderDefault
+            });
+            const rs = await rq.json();
+
+            console.log(rs);
+            if (CheckErrorResponse(rs) === false) return;
+            $('.slide-page-list').html('');
+            for (let page = 1; page <= rs.data.TotalPage; page++) {
+                $('.slide-page-list').append(`<a onclick="LoadListslide(${page});" data-page="${page}" class="slide-page ${_currentPage === page ? 'active' : ''}" id="page-num">${page}</a>`);
+            }
+            $("#list-slide").html('')
+            for (let i = 0; i < rs.data.ListSlide.length; i++) {
+                $('#list-slide').append(`<tr>
+                                    <td><div class="preview" style="background-image:url(${rs.data.ListSlide[i].Image})"></div></td>
+                                    <td>${rs.data.ListSlide[i].LinkWeb}</td>
+                                    <td>${rs.data.ListSlide[i].Area}</td>
+                                    <td>
+                                        <div class="button-icon">
+                                            <a><button class="btn btn-primary" style="margin-right:7px;" data-id="${rs.data.ListSlide[i].SlideId}" onclick="OpenUpdateSlide(this);"><i class="fa-regular fa-pen-to-square"></i></button></a>
+                                            <a><button class="btn btn-danger" data-id="${rs.data.ListSlide[i].SlideId}" onclick="DeleteSlide(this);"><i class="fa-solid fa-trash"></i></button></a>
+                                        </div>
+
+                                    </td>
+                            </tr>`)
+            }
+        }
+
+        const LoadDataSlide = async function (el) {
+            const id = $(el).data('#SlideId');
+
+            //lay du lieu tu api
+            const rq = await fetch('/api/AdminSlide/GetSlideById?id=' + id);
+
+            const rs = await rq.json();
+
+            if (CheckErrorResponse(rs) === false) return;
+            $('#Image').val(rs.data.Image);
+            $('#LinkWeb').val(rs.data.LinkWeb);
+        }
+        const OpenAddSlide = function () {
+            $('#modal-slide').css('display', 'flex');
+            isUpdate = false;
+        }
+        const CloseSlide = function () {
+            $('#modal-slide').css('display', 'none');
+            ResetData();
+        }
+        var ChooseThumbnail = function (el) { $(el).siblings('input[type=file]').click(); }
+        var ChooseThumbnail_OnChange = function (el) {
+            let reader = new FileReader();
+            reader.onloadend = function (e) {
+                $(el).siblings('input[type=hidden]').val(e.currentTarget.result.substring(e.currentTarget.result.indexOf(',') + 1, e.currentTarget.result.length));
+                $(el).siblings('.preview').css('background-image', `url(${e.currentTarget.result})`);
+            }
+            reader.readAsDataURL(el.files[0])
+        }
+        LoadListSlide();
+        const ResetData = function () {
+                $('#Image').val(''),
+                $('#LinkWeb').val(''),
+                    $('#modal-slide .preview').css('background-image', 'none')
+        }
+        const SaveSlide = async function () {
+            if (isUpdate == true) UpdateSlide();
+            else InsertSlide();
+        }
+        const InsertSlide = async function () {
+            isUpdate = false;
+            let model = {
+                Image: $('#Image').val(),
+                LinkWeb: $('#LinkWeb').val(),
+                Area: $('#area').val()
+            };
+            console.log(model);
+            if (model.Image === '') {
+                alert("Bạn cần thêm ảnh"); return;
+            }
+            if (GetObjectProperty(model, 'LinkWeb') === '') { alert('Link web không được để trống'); return; }
+
+
+            const rp = await fetch('/api/AdminSlide/InsertSlide', {
+                method: 'post',
+                headers: Enum.OptionHeaderDefault,
+                body: JSON.stringify(model)
+            });
+            let rs = await rp.json();
+
+
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                if (rs.message !== '' && rs.message !== null) alert(rs.message);
+                alert('Thêm slide thành công');
+                CloseSlide();
+                LoadListSlide();
+            }
+        }
+        const OpenUpdateSlide = async function (el) {
+            isUpdate = true;
+            $('#modal-slide').css('display', 'flex');
+            const id = $(el).attr('data-id');
+            console.log(id);
+            const rq = await fetch('/api/AdminSlide/GetSlideById?id=' + id);
+
+            const rs = await rq.json();
+            $('#modal-slide .preview').css('background-image', `url(${rs.data.Image})`);
+            $('#LinkWeb').val(rs.data.LinkWeb);
+            $('#SlideId').val(rs.data.SlideId);
+            $('#area').val(rs.data.Area);
+        }
+
+        const UpdateSlide = async function () {
+            $('#modal-slide').css('display', 'flex');
+            let model = {
+                SlideId: $('#SlideId').val(),
+                Image: $('#Image').val(),
+                LinkWeb: $('#LinkWeb').val(),
+                Area: $('#area').val()
+            }
+            console.log(model);
+            const rq = await fetch(`/api/AdminSlide/UpdateSlide`, {
+                method: 'post',
+                headers: Enum.OptionHeaderDefault,
+                body: JSON.stringify(model)
+            });
+
+            const rs = await rq.json();
+            if (CheckErrorResponse(rs) === false) return;
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                if (rs.message !== '' && rs.message !== null) alert(rs.message);
+                alert('Sửa slide thành công');
+                CloseSlide();
+                LoadListSlide();
+            }
+            $('#modal-slide').css('display', 'none');
+        }
+        const DeleteSlide = async function (el) {
+            if (confirm('Bạn có chắc muốn xóa tin tức này?')) {
+                let id = $(el).data('id');
+                console.log(id);
+                let rp = await fetch('/api/AdminSlide/DeleteSlide?slideId=' + id, {
+                    method: 'get',
+                    headers: Enum.OptionAdminHeaderDefault
+                });
+                let rs = await rp.json();
+
+                if (rs.status === 'error') if (rs.message !== '' && rs.message !== null) alert(rs.message);
+                if (rs.status === 'success') {
+                    if (rs.message !== '' && rs.message !== null) alert(rs.message);
+                    alert('Xoá slide này thành công');
+                    window.location.reload();
+                }
+                LoadListSlide();
+            }
+        }
+        const SearchSlide = function () {
+            LoadListSlide();
+        }
+
+        const SearchKeyPress = function (event) {
+            if (event.keyCode == 13) {
+                LoadListSlide();
+            }
+        }
+    </script>
+}
+

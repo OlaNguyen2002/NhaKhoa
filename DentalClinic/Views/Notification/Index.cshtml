@@ -1,0 +1,182 @@
+﻿
+@{
+    ViewBag.Title = "Thông báo";
+    ViewBag.Menu = "notification";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section styles {
+    <style>
+        section {
+            flex-direction: column;
+        }
+        /*NotiPage*/
+        .notification-page {
+            align-items: center;
+        }
+
+            .notification-page .list-noti {
+                padding: 20px 10px;
+                background-color: white;
+                border-radius: 10px;
+                width: 70%;
+                min-width: 700px;
+            }
+
+                .notification-page .list-noti .noti-detail {
+                    display: flex;
+                    padding: 10px 2px 5px;
+                    border-bottom: solid 0.5px #d4d3d3;
+                    cursor: pointer;
+                }
+
+                    .notification-page .list-noti .noti-detail .unread {
+                        width: 25px;
+                        align-items: center;
+                        display: flex;
+                    }
+
+                    .notification-page .list-noti .noti-detail .content {
+                        flex: 1;
+                    }
+
+                        .notification-page .list-noti .noti-detail .content .message {
+                            padding: 5px 0;
+                        }
+
+                        .notification-page .list-noti .noti-detail .content .time {
+                            font-size: 14px;
+                            text-align: right;
+                            color: #9e9e9e;
+                        }
+
+        .see-more-notification {
+            text-align: center;
+            padding: 30px;
+        }
+        .section-header {
+            font-size: 26px;
+            padding: 0 0 30px;
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: bold;
+            color: black;
+        }
+
+        .approve {
+            padding: 10px;
+            font-size: 16px;
+            margin: 20px 60px;
+        }
+
+        .bell {
+            display: block;
+            cursor: pointer;
+            background-image: url("https://quynhanhluxury.vn/uthagoan/2022/10/zalo-icon.png");
+            background-size: cover;
+            width: 75px;
+            height: 75px;
+            font-size: 60px;
+            position: fixed;
+            z-index: 1;
+            right: 25px;
+            bottom: 90px;
+            margin: 50px auto 0;
+            color: #9e9e9e;
+            -webkit-animation: ring 5s .7s ease-in-out infinite;
+            -webkit-transform-origin: 50% 2px;
+            -moz-animation: ring 5s .7s ease-in-out infinite;
+            -moz-transform-origin: 50% 2px;
+            animation: ring 5s .7s ease-in-out infinite;
+            transform-origin: 50% 2px;
+        }
+        /*EndNotiPage*/
+    </style>
+}
+
+<section class="notification-page" style="width: 950px; margin: auto;">
+    <div class="section-header">Thông báo</div>
+    <div class="list-noti">
+
+    </div>
+    <div class="see-more-notification">
+        <button class="btn btn-secondary btn-sm m-r-5" onclick="seeMoreNoti();">Xem thêm</button>
+    </div>
+</section>
+
+
+@section scripts{
+    <script>
+        var _page = 1;
+
+        const getNotificationList = async function (_page = 1) {
+            let page = _page;
+            let rq = await fetch('/api/Notification/GetListNotification?page=' + page, {
+                method: 'get',
+                headers: Enum.OptionHeaderDefault
+            });
+            let rs = await rq.json();
+            if (CheckErrorResponse(rs) === false) return;
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                if (rs.data.length <= 0) {
+                    $('.see-more-notification').remove();
+                    return;
+                }
+                if (rs.data.length <= 0 && page == 1) {
+                    $('.list-noti').append(`
+                        <div class="notNoti">Bạn không có thông báo nào</div>
+                    `);
+                    return;
+                }
+                for (let i = 0; i < rs.data.length; i++) {
+                    let item = rs.data[i];
+                    if (item.IsRead === true) {
+                        let html = `<div class="noti-detail">
+                                        <div class="unread"><i class="fa-solid fa-circle" style="color: #5896ff;font-size:10px;display:none"></i></div>
+                                        <div class="content">
+                                            <div class="message">${item.Message}</div>
+                                            <div class="time">${DateStringFormat({ stringDate: new Date(item.CreateTime), newFormat: 'dd/mm/yyyy hh:mi:ss' }) }</div>
+                                        </div>
+                                    </div>`;
+                        $('.list-noti').append(html);
+                    }
+                    if (item.IsRead === false) {
+                        let html = `<div class="noti-detail" data-id="${item.NotificationId}" onclick="SeeNotification(this);">
+                                        <div class="unread"><i class="fa-solid fa-circle" style="color: #5896ff;font-size:10px"></i></div>
+                                        <div class="content">
+                                            <div class="message" style="color:black">${item.Message}</div>
+                                            <div class="time">${DateStringFormat({ stringDate: new Date(item.CreateTime), newFormat: 'dd/mm/yyyy hh:mi:ss' }) }</div>
+                                        </div>
+                                    </div>`;
+                        $('.list-noti').append(html);
+                    }
+                }
+            }
+        }
+
+        const seeMoreNoti = function () {
+            _page++;
+            getNotificationList(_page);
+        }
+
+        const SeeNotification = async function (el) {
+            let id = $(el).data('id');
+            let rq = await fetch('/api/Notification/UpdateNotificationRead?id=' + id, {
+                method: 'get',
+                headers: Enum.OptionHeaderDefault
+            });
+            let rs = await rq.json();
+            if (CheckErrorResponse(rs) === false) return;
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                window.location.reload();
+            }
+        }
+
+        const InitPageNoti = async function () {
+            await getNotificationList();
+        }
+
+        InitPageNoti();
+    </script>
+}

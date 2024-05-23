@@ -1,0 +1,118 @@
+﻿@using DentalClinic.Models;
+@using DentalClinic.Providers;
+@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ServiceDental serviceDental = (ServiceDental)ViewBag.ServiceDental;
+    ServiceCategory serviceCategory = (ServiceCategory)ViewBag.ServiceCategory;
+    List<ServiceDental> listServiceDental = (List<ServiceDental>)ViewBag.ListServiceDental;
+}
+
+@section styles{
+    <link href="/Content/slick/slick.css" rel="stylesheet" />
+    <link href="/Content/slick/slick-theme.css" rel="stylesheet" />
+    <style>
+    </style>
+}
+@section Slider{
+    <!-- Banner Area -->
+    <div class="banner-area" data-background="/Content/assets/images/others/banner.jpg">
+        <div class="container h-100">
+            <div class="row h-100">
+                <div class="col-lg-12 my-auto text-center">
+                    <div class="banner-content">
+                        <h2 class="banner-title">Dịch vụ</h2>
+
+                        <div class="breadcrumb-container">
+                            <span><a href="/dich-vu/danh-sach?Currentpage=1">Dịch vụ</a></span>
+                            //
+                            <span class="current-item">Chi tiết dịch vụ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Banner Area End-->
+}
+<div class="card" style="width: 950px; margin: auto;">
+    <div class="card-body" style="padding: 20px 0;">
+        <div class="container">
+            <h2 class="font-weight-normal m-b-10">@serviceDental.Name</h2>
+            <div class="d-flex m-b-30">
+
+                <div class="m-l-15">
+                    <p class="m-b-0 text-muted font-size-13">@HelperProvider.GetDateTime(serviceDental.CreateTime).ToString("dd/MM/yyyy")</p>
+                </div>
+            </div>
+            <img alt="" class="img-fluid w-100" src="assets/images/others/img-8.jpg">
+            <div class="m-t-30">
+                <p>@Html.Raw(serviceDental.Description)</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="product-more-list" style="width:950px; margin: auto;">
+    <div class="product-offer">
+        <div class="hearder-product">
+            Dịch vụ liên quan
+        </div>
+        <div class="list-product list-product-offer">
+            @for (int indexServiceOffer = 0; indexServiceOffer < listServiceDental.Count; indexServiceOffer++)
+            {
+                <div class="item-product">
+                    <div>
+                        <a href="/dich-vu/chi-tiet/@HelperProvider.CreateSlugFromTitle(listServiceDental[indexServiceOffer].Name)/@listServiceDental[indexServiceOffer].ServiceId" class="product-image">
+                            <div class="image" style="background-image: url('@listServiceDental[indexServiceOffer].Thumbnail')"></div>
+                            <div class="product-status">Dịch vụ</div>
+                        </a>
+                        <div class="product-info">
+                            <a href="/dich-vu/chi-tiet/@HelperProvider.CreateSlugFromTitle(listServiceDental[indexServiceOffer].Name)/@listServiceDental[indexServiceOffer].ServiceId" class="product-title">
+                                @listServiceDental[indexServiceOffer].Name
+                            </a>
+                            <div class="add-product">
+                                <div class="price-product">
+                                    @HelperProvider.PrettyNumber(listServiceDental[indexServiceOffer].Price) đ
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="product-more" style="display: flex; justify-content: center; margin-bottom: 30px;">
+            <a href="/dich-vu/danh-sach?Currentpage=1" class="load-more" style="color: #435ebe">
+                Xem thêm dịch vụ
+            </a>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="/Content/slick/slick.min.js"></script>
+    <script>
+        var des = $('.product-detail-info').find('.description');
+        if ($(des[0].clientHeight)[0] > 190) {
+            $(des[0]).closest('.product-detail-info').find('.bottom').find('.description').css('height', '190px')
+            $(des[0]).closest('.product-detail-info').find('.bottom').append(`<div class="see-more-description" onclick="SeeMoreDetail(this);">
+                    Xem thêm
+                </div>`);
+        }
+        var SeeMoreDetail = function (el) {
+            $(des[0]).closest('.product-detail-info').find('.bottom').find('.description').css('height', 'auto');
+            $(el).closest('.bottom').append(`<div class="see-more-description" onclick="SeeCollapseDetail(this);">
+                    Thu gọn
+                </div>`);
+            $(el).remove();
+        }
+        var SeeCollapseDetail = function (el) {
+            $(des[0]).closest('.product-detail-info').find('.bottom').find('.description').css('height', '190px');
+            $(el).closest('.bottom').append(`<div class="see-more-description" onclick="SeeMoreDetail(this);">
+                    Xem thêm
+                </div>`);
+            $(el).remove();
+        }
+    </script>
+}
+
+

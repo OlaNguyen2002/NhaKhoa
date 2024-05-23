@@ -1,0 +1,309 @@
+﻿@using DentalClinic.Models;
+@using DentalClinic.Providers;
+@{
+    List<News> lsNews = (List<News>)ViewBag.ListNews;
+    List<Doctor> lsDoctor = (List<Doctor>)ViewBag.ListDoctor;
+    List<ServiceDental> lsService = (List<ServiceDental>)ViewBag.ListService;
+    List<CustomerFeedback> lsCustomerFeedback = (List<CustomerFeedback>)ViewBag.ListCustomerFeedback;
+    List<ServiceCategoryUpdate> lsServiceCategoryUpdate = (List<ServiceCategoryUpdate>)ViewBag.ListServiceCategoryUpdate;
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section styles{
+    <link href="/Content/slick/slick.css" rel="stylesheet" />
+    <link href="/Content/slick/slick-theme.css" rel="stylesheet" />
+    <style>
+    </style>
+}
+
+@section Slider{
+    <section class="wrd-home-slider-area">
+        <div class="wrd-home-slider-wrapper">
+            <div class="wrd-single-slide-item wrd-cover-bg" data-background="/Content/assets/images/slider/home-1-slider-1.jpg">
+                <div class="container">
+                    <div class="row">
+                        <div class="wrd-slider-content-column col-xl-6 col-lg-8 col-md-11">
+                            <div class="wrd-slider-content-wrapper">
+                                <div class="wrd-slider-content">
+
+                                    <div class="slider-bg-text wrd-secondary-font" data-animation="fadeInUp" data-delay=".5s">Medical</div>
+
+                                    <div class="slide-subtitle wrd-secondary-font" data-animation="fadeInUp" data-delay=".5s">
+                                        Welcome to Health Care
+                                    </div>
+
+                                    <div class="wrd-slide-title" data-animation="fadeInUp" data-delay=".9s">
+                                        <h2>Medical & Health Care Solutions.</h2>
+                                    </div>
+
+                                    <div class="wrd-slider-content-text" data-animation="fadeInUp" data-delay="1.75s">
+                                        We’ve 25 Years of experience in Medical Services.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="wrd-single-slide-item wrd-cover-bg" data-background="/Content/assets/images/slider/home-1-slider-2.jpg">
+                <div class="container">
+                    <div class="row">
+                        <div class="wrd-slider-content-column col-xl-6 col-lg-8 col-md-11">
+                            <div class="wrd-slider-content-wrapper">
+                                <div class="wrd-slider-content">
+
+                                    <div class="slider-bg-text wrd-secondary-font" data-animation="fadeInUp" data-delay=".5s">Medical</div>
+
+                                    <div class="slide-subtitle wrd-secondary-font" data-animation="fadeInUp" data-delay=".5s">
+                                        Welcome to Health Care
+                                    </div>
+
+                                    <div class="wrd-slide-title" data-animation="fadeInUp" data-delay=".9s">
+                                        <h2>Medical & Health Care Solutions.</h2>
+                                    </div>
+
+                                    <div class="wrd-slider-content-text" data-animation="fadeInUp" data-delay="1.75s">
+                                        We’ve 25 Years of experience in Medical Services.
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+<!-- Service Section -->
+<section class="wrd-service-one-section">
+    <div class="wrd-service-one-item-wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="wrd-section-title-wrapper">
+                        <div class="wrd-section-title-content wrd-secondary-font">
+                            <div class="wrd-section-title-bg-text">Services</div>
+                            <div class="wrd-section-title">
+                                <h2>Dịch vụ nha khoa nổi bật</h2>
+                            </div>
+                            <div class="title-bottom-line" data-background="/Content/assets/images/others/line.png"></div>
+                            <div style="display: flex; justify-content: flex-end; font-size: 18px;">
+                                <a href="/dich-vu/danh-sach?Currentpage=1" class="header-more-latest-news">
+                                    Xem thêm
+                                </a>
+                                @*<div class="category-tab">
+                                    <div>
+                                        @for (int category = 0; category < lsServiceCategoryUpdate.Count; category++)
+                                        {
+                                            if (category == 0)
+                                            {
+                                                <div class="item-category active" data-idcategory="@("category"+category)" onclick="chagecategory(this);">
+                                                    @lsServiceCategoryUpdate[category].Name
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="item-category" data-idcategory="@("category"+category)" onclick="chagecategory(this);">
+                                                    @lsServiceCategoryUpdate[category].Name
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                @for (int index = 0; index < lsService.Count; index++)
+                {
+                    <div class="col-xl-4 col-lg-6 col-md-6">
+                        <div class="wrd-service-one-item">
+                            <a class="wrd-service-one-image wrd-cover-bg" href="/dich-vu/chi-tiet/@HelperProvider.CreateSlugFromTitle(lsService[index].Name)/@lsService[index].ServiceId" data-background="@lsService[index].Thumbnail"></a>
+                            <div class="service-one-content">
+                                <a href="/dich-vu/chi-tiet/@HelperProvider.CreateSlugFromTitle(lsService[index].Name)/@lsService[index].ServiceId" class="service-one-title">@lsService[index].Name</a>
+                                @*<div class="service-one-description">
+                                    <p>@lsService[index].Price</p>
+                                </div>*@
+
+                                <div class="service-one-details-button">
+                                    <a class="wrd-text-button" href="/dich-vu/chi-tiet/@HelperProvider.CreateSlugFromTitle(lsService[index].Name)/@lsService[index].ServiceId">
+                                        Xem chi tiết
+                                        <i class="fas fa-angle-double-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Service Section End -->
+<!-- Doctors / Team Member Section -->
+<section class="doctors-slider-section">
+    <div class="wrd-team-one-wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="wrd-section-title-wrapper">
+                    <div class="wrd-section-title-content wrd-secondary-font">
+                        <div class="wrd-section-title-bg-text">Doctors</div>
+                        <div class="wrd-section-title">
+                            <h2>Đội ngũ bác sĩ</h2>
+                        </div>
+                        <div class="title-bottom-line" data-background="/Content/assets/images/others/line.png"></div>
+                        <div style="display: flex; justify-content: flex-end; font-size: 18px; margin-right: 30px;">
+                            <a href="/bac-si/danh-sach?page=1" class="header-more-latest-news">
+                                Xem thêm
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="wrd-doctors-one-slider" class="row">
+                @for (int index = 0; index < lsDoctor.Count; index++)
+                {
+                    <div class="col-lg-12">
+                        <div class="wrd-single-team-member">
+                            <div class="member-image-wrapper">
+                                <a class="wrd-member-details-url" href="/bac-si/bai-viet/@HelperProvider.CreateSlugFromTitle(lsDoctor[index].Name)/@lsDoctor[index].DoctorId">
+                                    <div class="member-image">
+                                        <img src="@lsDoctor[index].Avatar" alt="Team" style="height: 400px; width: 300px;">
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="wrd-member-content">
+                                <a href="/bac-si/bai-viet/@HelperProvider.CreateSlugFromTitle(lsDoctor[index].Name)/@lsDoctor[index].DoctorId">
+                                    <h3 class="wrd-member-name"> @lsDoctor[index].Name</h3>
+                                </a>
+                                <span class="wrd-member-designation wrd-secondary-font">@Html.Raw(lsDoctor[index].Qualification)</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Doctors / Team Member Section End -->
+
+<section class="wrd-testimonial-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-6 col-lg-8 col-md-10">
+                <div class="wrd-section-title-wrapper left">
+                    <div class="wrd-section-title-content wrd-secondary-font">
+                        <div class="wrd-section-title-bg-text">Feedback</div>
+                        <div class="wrd-section-title">
+                            <h2>Khách hàng nói gì về chúng tôi</h2>
+                        </div>
+                        <div class="title-bottom-line" data-background="assets/images/others/line.png"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="wrd-testimonial-one-slider-wrapper">
+            <div id="wrd-testimonial-slider-one" class="row wrd-testimonial-one-slider">
+                @for (int index = 0; index < lsCustomerFeedback.Count; index++)
+                {
+                    <div class="col-12">
+                        <div class="wrd-testimonial-one-item">
+                            <div class="wrd-testimonial-one-author-image wrd-cover-bg" data-background="@lsCustomerFeedback[index].Avatar"></div>
+
+                            <div class="wrd-testimonial-one-desc">
+                                <p>@lsCustomerFeedback[index].Contents</p>
+                            </div>
+
+                            <div class="wrd-testimonial-one-author-name-designation">
+                                <div class="wrd-testimonial-quote wrd-primary-color"><i class="flaticon-quotation"></i></div>
+                                <h4 class="wrd-testimonial-one-author-name">@lsCustomerFeedback[index].CustomerName</h4>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+<section class="wrd-recent-post-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="wrd-section-title-wrapper">
+                    <div class="wrd-section-title-content wrd-secondary-font">
+                        <div class="wrd-section-title-bg-text">Blog News</div>
+
+                        <div class="wrd-section-title">
+                            <h2>Tin tức</h2>
+                        </div>
+                        <div class="title-bottom-line" data-background="assets/images/others/line.png"></div>
+                        <div style="display: flex; justify-content: flex-end; font-size: 18px;">
+                            <a href="/tin-tuc/danh-sach?page=1" class="header-more-latest-news">
+                                Xem thêm
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="wrd-recent-post-wrapper">
+            <div class="row">
+                @for (int index = 0; index < lsNews.Count; index++)
+                {
+                    <div class="col-xl-4 col-lg-6 col-md-6">
+                        <article class="wrd-recent-post-item">
+                            <a href="/tin-tuc/bai-viet/@HelperProvider.CreateSlugFromTitle(lsNews[index].Title)/@lsNews[index].NewsId" class="wrd-recent-post-thumbnail wrd-cover-bg" data-background="@lsNews[index].Thumbnail"></a>
+
+                            <div class="wrd-recent-post-content">
+                                <div class="wrd-post-meta post-meta">
+                                    <ul class="wrd-list-style wrd-list-inline">
+                                        <li>
+                                            <span class="posted-on">
+                                                <i class="far fa-calendar-check"></i> <a href="/tin-tuc/bai-viet/@HelperProvider.CreateSlugFromTitle(lsNews[index].Title)/@lsNews[index].NewsId"> @HelperProvider.GetDateTime(lsNews[index].CreateTime).ToString("HH:mm dd/MM/yyyy")</a>
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="wrd-recent-post-title">
+                                    <a href="/tin-tuc/bai-viet/@HelperProvider.CreateSlugFromTitle(lsNews[index].Title)/@lsNews[index].NewsId">
+                                        <h4 class="post-title">@lsNews[index].Title</h4>
+                                    </a>
+                                </div>
+
+                                <div class="wrd-post-read-more">
+                                    <a class="wrd-text-button" href="/tin-tuc/bai-viet/@HelperProvider.CreateSlugFromTitle(lsNews[index].Title)/@lsNews[index].NewsId">Đọc thêm <i class="fas fa-angle-double-right"></i></a>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Recent Posts Section End -->
+@section scripts{
+    <script>
+        const chagecategory = function (item) {
+            let data = $(item).data('idcategory');
+            $(item).siblings('.active').removeClass('active');
+            $(item).addClass('active');
+            $('.home-product-section').find('.home-product-list.active').removeClass('active');
+            $('#' + data).addClass('active');
+        }
+    </script>    
+}

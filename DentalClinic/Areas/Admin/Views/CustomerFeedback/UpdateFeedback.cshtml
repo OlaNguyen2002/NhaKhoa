@@ -1,0 +1,135 @@
+﻿
+@{
+    ViewBag.Title = "UpdateFeedback";
+    ViewBag.Menu = "manage-content";
+    ViewBag.SubMenu = "customer-feedback";
+}
+
+@section styles{
+    <style>
+        .create-product {
+            max-width: 70%;
+        }
+
+            .create-product .title {
+                text-align: center;
+                text-transform: uppercase;
+                font-size: 30px;
+            }
+
+        .form-add {
+        }
+
+            .form-add .price {
+                margin-top: 10px;
+            }
+
+        .create-button {
+            /* width: fit-content;
+            padding: 5px 5px;
+            background-color: #8c237b;
+            color: white !important;
+            border-radius: 5px;
+            cursor: pointer;
+            border: solid #8c237b 1px !important;*/
+            width: 100px;
+            padding: 5px 5px;
+            background-color: #435ebe;
+            color: white !important;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .body {
+            margin-top: 20px;
+        }
+
+        .main-content {
+            padding: 51px !important;
+        }
+    </style>
+}
+
+
+<div class="body" style="display:flex;">
+    <div style="display:flex;flex-direction:column;padding-right:20px; flex: 1;">
+
+
+        <div class="form-group" id="">
+            <label class="font-weight-semibold" for="name">Tên người đánh giá</label>
+            <input type="text" class="form-control" id="CustomerName" placeholder="Nhập tên" required>
+        </div>
+        <div class="form-group">
+            <label class="font-weight-semibold" for="name">Ảnh đại diện </label>
+            <div class="preview" style=" width: 150px; height: 150px; background-position: center; background-repeat: no-repeat; background-size: cover; border: .5px solid #d7d7d7; cursor: pointer; background-image: url('/Content/img/pick-image.png');" onclick="ChooseThumbnail(this);"></div>
+            <input type="file" style="display:none;" onchange="ChooseThumbnail_OnChange(this);" required />
+            <input type="hidden" id="Avatar" />
+        </div>
+    </div>
+    <div style="display: flex; flex-direction: column; padding-right: 20px; flex: 2;">
+
+        <div class="form-group product-property">
+            <label class="font-weight-semibold" for="name">Đánh giá</label>
+            <textarea class="form-control" aria-label="With textarea" style="resize:none;" placeholder="Nhập lời dánh giá" rows="17" id="Contents"></textarea>
+        </div>
+    </div>
+</div>
+<button type="button" onclick="UpdateFeedback();" class="btn btn-primary" style="width: 200px;">Cập nhật đánh giá</button>
+
+@section scripts{
+    <script>
+        var ChooseThumbnail = function (el) { $(el).siblings('input[type=file]').click(); }
+        var ChooseThumbnail_OnChange = function (el) {
+            let reader = new FileReader();
+            reader.onloadend = function (e) {
+                $(el).siblings('input[type=hidden]').val(e.currentTarget.result.substring(e.currentTarget.result.indexOf(',') + 1, e.currentTarget.result.length));
+                $(el).siblings('.preview').css('background-image', `url(${e.currentTarget.result})`);
+            }
+            reader.readAsDataURL(el.files[0])
+        }
+
+         let GetFeedback = async function () {
+            const id = "@ViewBag.Id";
+             let rp = await fetch('/api/adminCustomerFeedback/GetFeedbackById?CustomerFeedbackId=' + id, {
+                method: 'get',
+                headers: Enum.OptionAdminHeaderDefault
+            });
+            let rs = await rp.json();
+            if (rs) {
+                console.log(rs);
+                $('#CustomerName').val(rs.data.CustomerName);
+
+                //$('#Thumbnail').val(rs.data.Thumbnail);
+
+                $('.preview').css('background-image', `url(${rs.data.Avatar})`)
+
+                $('#Contents').val(rs.data.Contents);
+            }
+        }
+        const UpdateFeedback = async function () {
+            if (confirm('Bạn có chắc muốn cập nhật phản hồi này?')) {
+                let model = {
+                    CustomerName: $('#CustomerName').val(),
+                    Avatar: $('#Avatar').val(),
+                    Contents: $('#Contents').val(),
+                    CustomerFeedbackId: "@ViewBag.Id"
+                };
+                    const rp = await fetch('/api/admincustomerfeedback/Updatefeedback', {
+                        method: 'post',
+                        headers: Enum.OptionAdminHeaderDefault,
+                        body: JSON.stringify(model)
+                    });
+                    let rs = await rp.json();
+                    console.log(rs);
+                    if (rs.status === 'error') if (rs.message !== '' && rs.message !== null) alert(rs.message);
+                    if (rs.status === 'success') {
+                        if (rs.message !== '' && rs.message !== null) alert(rs.message);
+                        window.location.href = '/Admin/CustomerFeedback/Index/';
+                    }
+            }
+        }
+
+        GetFeedback();
+    </script>
+}
+

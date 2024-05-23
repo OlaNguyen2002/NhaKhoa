@@ -1,0 +1,150 @@
+﻿@using DentalClinic.Models;
+@using DentalClinic.Providers;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ServiceListViewModel serviceListViewModel = (ServiceListViewModel)ViewBag.ListService;
+    ServiceCategoryUpdate serviceCategoryUpdate = (ServiceCategoryUpdate)ViewBag.Category;
+    List<ServiceCategoryUpdate> lsServiceCategoryUpdate = (List<ServiceCategoryUpdate>)ViewBag.ListServiceCategoryUpdate;
+}
+
+@section styles{
+    <link href="~/Content/slick/slick-theme.css" rel="stylesheet" />
+    <link href="~/Content/slick/slick.css" rel="stylesheet" />
+    <style>
+        .product-page-list {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+            .product-page-list > a {
+                width: 25px;
+                height: 25px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 100%;
+                font-size: 13px;
+                cursor: pointer;
+                background-color: #3f87f5 !important;
+                color: white !important;
+            }
+
+            .product-page-list .active {
+                background-color: #3f87f5 !important;
+                color: white !important;
+            }
+    </style>
+}
+
+@section Slider{
+    <!-- Banner Area -->
+    <div class="banner-area" data-background="/Content/assets/images/others/banner.jpg">
+        <div class="container h-100">
+            <div class="row h-100">
+                <div class="col-lg-12 my-auto text-center">
+                    <div class="banner-content">
+                        <h2 class="banner-title">Dịch vụ</h2>
+
+                        <div class="breadcrumb-container">
+                            <span><a href="/">Trang chủ</a></span>
+                            //
+                            <span class="current-item">Dịch vụ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Banner Area End-->
+}
+<div class="product product-all" style="width: 950px; margin: auto;">
+    <div class="hearder-product" style=" display: flex; justify-content: space-between;">
+        @if (serviceCategoryUpdate != null)
+        {
+            <div>@serviceCategoryUpdate.Name</div>
+        }
+        else
+        {
+            <div> Tất cả dịch vụ </div>
+        }
+        <select onchange="changeCategory(this);">
+            <option data-id="">Tất cả danh mục</option>
+            @if (serviceCategoryUpdate == null)
+            {
+                for (int index = 0; index < lsServiceCategoryUpdate.Count; index++)
+                {
+                    <option data-id="@lsServiceCategoryUpdate[index].ServiceCategoryId">
+                        @lsServiceCategoryUpdate[index].Name
+                    </option>
+                }
+            }
+            else
+            {
+                for (int index = 0; index < lsServiceCategoryUpdate.Count; index++)
+                {
+                    <option data-id="@lsServiceCategoryUpdate[index].ServiceCategoryId" @(serviceCategoryUpdate.ServiceCategoryId == lsServiceCategoryUpdate[index].ServiceCategoryId ? "selected" : "")>
+                        @lsServiceCategoryUpdate[index].Name
+                    </option>
+                }
+            }
+        </select>
+    </div>
+    <div class="product-list-all">
+        @for (int indexService = 0; indexService < serviceListViewModel.ListService.Count; indexService++)
+        {
+            <div class="item-product">
+                <div>
+                    <a href="/dich-vu/chi-tiet/@HelperProvider.CreateSlugFromTitle(serviceListViewModel.ListService[indexService].Name)/@serviceListViewModel.ListService[indexService].ServiceId" class="product-image">
+                        <div class="image" style="background-image: url('@serviceListViewModel.ListService[indexService].Thumbnail')" data-thumbnail="@serviceListViewModel.ListService[indexService].Thumbnail"></div>
+                    </a>
+                    <div class="product-info">
+                        <a href="/san-pham/chi-tiet/@HelperProvider.CreateSlugFromTitle(serviceListViewModel.ListService[indexService].Name)/@serviceListViewModel.ListService[indexService].ServiceId" class="product-title">
+                            @serviceListViewModel.ListService[indexService].Name
+                        </a>
+                        <div class="add-product">
+                            <div class="price-product" data-price="@serviceListViewModel.ListService[indexService].Price">
+                                @HelperProvider.PrettyNumber(serviceListViewModel.ListService[indexService].Price) đ
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="product-page-list" style="margin-bottom: 30px;">
+    @for (int page = 1; page <= serviceListViewModel.TotalPage; page++)
+    {
+        <a href="/dich-vu/danh-sach?Currentpage=@page" data-page="@page" class="product-page">
+            @page
+        </a>
+    }
+</div>
+@section scripts{
+        <script>
+            var changeCategory = function (select) {
+                let id = $(select).find(':selected').data('id');
+                let link = '/dich-vu/danh-sach?Currentpage=1';
+                if (id !== '') {
+                    link += '&ServiceCategoryId=' + id;
+                }
+                window.location.href = link;
+            }
+            var activepage = function () {
+                let link = window.location.href.split('/dich-vu/danh-sach?Currentpage=')[1];
+                let listpage = $('.product-page-list').find('.product-page');
+                for (let page = 0; page < listpage.length; page++) {
+                    if ($(listpage[page]).data('page') === parseInt(link)) {
+                        $(listpage[page]).addClass('active');
+                    }
+                }
+            }
+            activepage();
+        </script>
+    }
+
+

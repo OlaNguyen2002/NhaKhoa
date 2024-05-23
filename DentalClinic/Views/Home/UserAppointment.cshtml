@@ -1,0 +1,282 @@
+﻿
+@{
+    ViewBag.Title = "UserAppointment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Slider{
+    <!-- Banner Area -->
+    <div class="banner-area" data-background="/Content/assets/images/others/banner.jpg">
+        <div class="container h-100">
+            <div class="row h-100">
+                <div class="col-lg-12 my-auto text-center">
+                    <div class="banner-content">
+                        <h2 class="banner-title">Danh sách lịch hẹn</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Banner Area End-->
+}
+
+@section styles{
+    <style>
+        .account-page-content .main-content {
+            padding: 10px 10px 10px 10px !important;
+            width: 80%;
+            margin: auto;
+        }
+
+        #tab-order .search-order {
+            display: flex;
+            background-color: white;
+            padding: 20px 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        #tab-order .search-keyword {
+            width: 400px;
+            margin-right: 10px;
+        }
+
+        #tab-order .date-create {
+            flex: 2;
+            margin-left: 10px;
+        }
+
+            #tab-order .date-create .date-pick {
+                display: flex;
+                gap: 10px;
+            }
+
+
+                #tab-order .date-create .date-pick input {
+                    width: 45%;
+                }
+
+        #tab-order .search-tab-3 {
+            display: flex;
+            align-items: center;
+            padding-top: 10px;
+        }
+
+            #tab-order .search-tab-3 .search-btn {
+                padding: 5px 25px;
+                border-radius: 10px;
+                font-size: 16px;
+                font-weight: 500;
+                cursor: pointer;
+                background-color: #162938;
+                border-color: #162938;
+                margin-top: 22px;
+                color: white;
+            }
+
+        .list-order {
+            background-color: white;
+        }
+
+        .table-custom th {
+            text-align: center;
+        }
+
+        .table-custom td {
+            text-align: center;
+        }
+
+        #list-order tr {
+            cursor: pointer;
+        }
+
+        #list-order-mobile tr div {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            padding: 2px;
+        }
+
+        .product-page-list {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+            .product-page-list > a {
+                width: 25px;
+                height: 25px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 100%;
+                font-size: 13px;
+                cursor: pointer;
+                background-color: #3f87f5 !important;
+                color: white !important;
+            }
+
+            .product-page-list .active {
+                background-color: #3f87f5 !important;
+                color: white !important;
+            }
+    </style>
+}
+
+
+<div class="account-page-content">
+    <div class="main-content">
+        <div class="">
+            <div class="tab-content m-t-15">
+                <div class="tab-pane fade show active" id="tab-order">
+                    <div class="search-order">
+                        <div class="form-group search-keyword" id="email-form">
+                            <label class="font-weight-semibold" for="keyword">Từ khoá</label>
+                            <input type="text" class="form-control" id="keyword" placeholder="Nhập từ khoá tìm kiếm" required>
+                        </div>
+                        <div class="search-tab-3"><a onclick="SearchAppointment();" class="search-btn btn-primary">Tìm kiếm</a></div>
+
+                    </div>
+                    <div class="list-order desktop">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-custom">
+                                <thead>
+                                    <tr>
+                                        <th style="width:15%">Mã lịch hẹn</th>
+                                        <th style="width:15%">Tổng dịch vụ</th>
+                                        <th style="width:20%">Bác sĩ</th>
+                                        <th style="width:10%">Ngày hẹn</th>
+                                        <th style="width:10%">Giờ hẹn</th>
+                                        <th style="width:10%">Trạng thái</th>
+                                        <th style="width:15%">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="list-appointment">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="product-page-list" id="page-order" style="margin-bottom: 30px;">
+</div>
+@section scripts{
+    <script>
+        const SearchAppointment = function () {
+            getListAppointment();
+        }
+        let _currentPage = 1;
+        const getListAppointment = async function (page = 1) {
+            _currentPage = page;
+            let keyword = $('#keyword').val();
+
+            let rq = await fetch(Enum.ApiUrl + '/api/UserAppointment/GetListAppointmentOfUser?page=' + page + '&keyword=' + keyword, {
+                method: 'get',
+                headers: Enum.OptionHeaderDefault
+            });
+            let rs = await rq.json();
+            console.log(rs);
+            if (CheckErrorResponse(rs) === false) return;
+            $('#list-appointment').html('');
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                $('#page-order').html('');
+                for (let page = 1; page <= rs.data.TotalPage; page++) {
+                    $('#page-order').append(`<a onclick="getListAppointment(${page});" data-page="${page}" class="product-page ${_currentPage === page ? 'active' : ''}" id="page-num">${page}</a>`);
+                }
+                for (let index = 0; index < rs.data.ListUserAppointmentInfor.length; index++) {
+                    var x = rs.data.ListUserAppointmentInfor[index];
+                    let html = '<tr data-id=' + x.AppointmentCode + ' onclick="openAppointmentDetail(this)" style="cursor: pointer;">';
+                    html += '<td>[' + x.AppointmentCode + ' ]</td>';
+                    //html += '<td><div>';
+                    //for (let indexChild = 0; indexChild < x.lsServiceDental.length; indexChild++) {
+                    //    let y = x.lsServiceDental[indexChild]
+                    //    html += '<div style="display:flex;justify-content:space-between">';
+                    //    html += '<div style="text-align:left">- ' + y.Name + '</div>';
+                    //    html += '<div style="text-align:right">' + NumberFormat(y.Price) + ' đ </div>';
+                    //    html += '</div>';
+                    //}
+                    //html += '</div></td>';
+                    html += '<td style="text-align:right">' + NumberFormat(x.TotalAmount) + ' (VND)</td>';
+                    html += '<td>' + x.NameDoctor + ' </td>';
+                    html += '<td>' + x.Day + "-" + x.Month + "-" + x.Year + ' </td>';
+                    html += '<td>' + x.Hour + ":" + (x.Minute === 0 ? '00' : x.Minute) + '</td>';
+
+                    let button = '';
+                    let status = '';
+                    switch (x.Status) {
+                        case 'PENDING':
+                            status = '<span class="badge bg-warning"> Chờ xác nhận </span>';
+
+                            button += '<button class="btn btn-danger btn-tone m-r-5 btn-sm" onclick="userCancel(this,event)" data-id="' + x.UserAppointmentId + '"> Huỷ </button>';
+                            break;
+                        case 'RECEIVE':
+                            status = '<span class="badge bg-info"> Đã tiếp nhận </span>';
+
+                            break;
+                        case 'CONFIRM_ARRIVE':
+                            status = '<span class="badge bg-secondary"> Đã đến </span>';
+
+                            break;
+                        case 'DONE':
+                            status = '<span class="badge bg-success"> Hoàn thành </span>';
+
+                            break;
+                        case 'USER_CANCEL':
+                            status = '<span class="badge bg-danger"> Người dùng huỷ </span>';
+
+                            break;
+                        case 'SYSTEM_CANCEL':
+                            status = '<span class="badge bg-danger"> Hệ thống huỷ </span>';
+
+                            break;
+                        default: break;
+                    }
+
+                    html += '<td>' + status + '</td>';
+                    html += '<td>' + button + '</td></tr>';
+                    $('#list-appointment').append(html);
+                }
+            }
+        }
+        const openAppointmentDetail = function (el) {
+            let appointmentId = $(el).data('id');
+            window.location.href = ('/chi-tiet-lich-hen/' + appointmentId);
+        }
+        const initPage = async function () {
+            await getListAppointment();
+        }
+        const userCancel = async function (el, event) {
+
+            Swal.fire({
+                icon: "question",
+                title: "Xác nhận hủy lịch hẹn này?",
+                preConfirm: async function () {
+                    let id = $(el).data('id');
+                    let rq = await fetch(Enum.ApiUrl + '/api/UserAppointment/UserCancelAppointment?userAppointmentId=' + id, {
+                        method: 'get',
+                        headers: Enum.OptionHeaderDefault
+                    });
+                    let rs = await rq.json();
+                    if (CheckErrorResponse(rs) === false) return;
+                    if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Huỷ lịch hẹn thành công",
+                            preConfirm: function () {
+                                window.location.reload();
+                            }
+                        })
+                    }
+                },
+                didClose: function () {
+                    return;
+                }
+            })
+            event.stopImmediatePropagation();
+        }
+        initPage();
+    </script>
+}

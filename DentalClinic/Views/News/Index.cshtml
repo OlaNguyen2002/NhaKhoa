@@ -1,0 +1,115 @@
+﻿@using DentalClinic.Models;
+@using DentalClinic.Providers;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    NewsListViewModel newsListModel = (NewsListViewModel)ViewBag.ListNews;
+}
+
+@section styles{
+    <style>
+        .img-fix {
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .news-header {
+            font-size: 26px;
+            font-weight: 700;
+            margin: 20px 0 10px;
+            color: #232323;
+        }
+
+        .mg-bottom {
+            margin-bottom: 20px;
+        }
+    </style>
+}
+@section Slider{
+    <!-- Banner Area -->
+    <div class="banner-area" data-background="/Content/assets/images/others/banner.jpg">
+        <div class="container h-100">
+            <div class="row h-100">
+                <div class="col-lg-12 my-auto text-center">
+                    <div class="banner-content">
+                        <h2 class="banner-title">Tin tức</h2>
+
+                        <div class="breadcrumb-container">
+                            <span><a href="/">Trang chủ</a></span>
+                            //
+                            <span class="current-item">Tin tức</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Banner Area End-->
+}
+<div class="row news-list" style="width: 950px; margin: auto;">
+    <div class="mx-auto">
+        <div class="news-header">
+           
+        </div>
+        <div class="row news-mobile">
+            @for (int index = 0; index < newsListModel.ListNews.Count; index++)
+            {
+                <div class="col-md-4">
+                    <div class="card">
+                        <img class="card-img-top img-fix" src="@newsListModel.ListNews[index].Thumbnail" alt="">
+                        <div class="card-body" style="padding:1rem">
+                            <h4 class="m-t-10 header-limit-2-line">@newsListModel.ListNews[index].Title</h4>
+                            <p class="m-b-20" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;line-height: 18px;">@newsListModel.ListNews[index].Description</p>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <p class="m-b-0 font-weight-semibold font-size-13" style="color:gray">
+                                    @HelperProvider.GetDateTime(newsListModel.ListNews[index].CreateTime).ToString("dd/MM/yyyy")
+                                </p>
+                                <a class="text-primary btn btn-sm btn-hover" href="/tin-tuc/bai-viet/@HelperProvider.CreateSlugFromTitle(newsListModel.ListNews[index].Title)/@newsListModel.ListNews[index].NewsId">
+                                    <span>Đọc thêm</span>
+                                </a>
+                            </div>
+                        </div>
+                        <!--<div class="card-footer">-->
+                        <!--Phần của người đăng bài lấy avt + name-->
+                        <!--<div class="d-flex align-items-center m-t-5">
+                                <div class="avatar avatar-image avatar-sm">
+                                    <img src="@newsListModel.ListNews[index].Thumbnail" alt="">
+                                </div>
+                                <div class="m-l-10">
+                                    <span class="font-weight-semibold"></span>
+                             </div>
+                            </div>
+                        </div>-->
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="m-t-30">
+    <nav class="mg-bottom">
+        <ul class="pagination justify-content-center">
+            <li class="page-item"><a class="page-link page-previous" href="#">Trước</a></li>
+            @for (int index = 1; index <= newsListModel.TotalPage; index++)
+            {
+                <li class="page-item @(ViewBag.page == index ? "active":"" ) "><a class="page-link" href="/tin-tuc/danh-sach?page=@index">@index</a></li>
+            }
+            <li class="page-item"><a class="page-link page-next" href="#">Sau</a></li>
+        </ul>
+    </nav>
+</div>
+@section scripts{
+    <script>
+       var getvalueActive = function () {
+           var numberpage = window.location.href.split('/tin-tuc/danh-sach?page=')[1];
+           if (parseInt(numberpage) > 1) {
+               $('.page-previous').attr('href', `/tin-tuc/danh-sach?page=${parseInt(numberpage) - 1}`);
+           }
+           if (parseInt(numberpage) < parseInt('@newsListModel.TotalPage')) {
+               $('.page-next').attr('href', `/tin-tuc/danh-sach?page=${parseInt(numberpage) + 1}`);
+           }
+       }
+       getvalueActive();
+    </script>
+}
+

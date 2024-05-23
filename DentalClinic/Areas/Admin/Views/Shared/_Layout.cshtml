@@ -1,0 +1,431 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Nha khoa Hữu Tuấn</title>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/Content/assets/css/bootstrap.css">
+    <link href="/Content/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/Content/assets/vendors/perfect-scrollbar/perfect-scrollbar.css">
+    <link rel="stylesheet" href="/Content/assets/css/app.css">
+    <link rel="shortcut icon" href="/Content/assets/images/favicon.svg" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    <style>
+        .submenu .submenu-item {
+            cursor: pointer;
+        }
+
+        .overlay {
+            position: fixed;
+            z-index: 1040;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100vw;
+            height: 100vh;
+            background-color: #00000060;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            border-radius: 10px;
+            width: 450px;
+        }
+
+            .form .form-header {
+                padding: 15px;
+                border-bottom: .5px solid #e9e9e9;
+            }
+
+            .form .form-footer {
+                padding: 15px;
+                border-top: .5px solid #e9e9e9;
+            }
+
+            .form .form-header .form-title {
+                text-align: center;
+                font-weight: bold;
+                font-size: 16px;
+            }
+
+            .form .form-body {
+                padding: 15px;
+            }
+
+            .form .form-footer {
+            }
+
+                .form .form-footer .action {
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 20px;
+                }
+
+        .product-page-list {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+            .product-page-list > a {
+                width: 25px;
+                height: 25px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 100%;
+                font-size: 13px;
+                cursor: pointer;
+            }
+
+            .product-page-list .active {
+                background-color: #3f87f5;
+                color: white !important;
+            }
+
+        .sidebar-wrapper .sidebar-header img {
+            height: 3.2rem !important;
+        }
+    </style>
+    @RenderSection("styles", false)
+</head>
+
+<body>
+    <div id="app">
+        <div id="sidebar" class="active">
+            <div class="sidebar-wrapper active">
+                <div class="sidebar-header">
+                    <div class="d-flex justify-content-between">
+                        <div class="logo">
+                            <a href="/admin"><img src="~/Content/assets/images/logo/logo-default.png" alt="Logo" srcset=""></a>
+                        </div>
+                        <div class="toggler">
+                            <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-menu">
+                    <ul class="menu">
+
+                        <li class="sidebar-item @(ViewBag.Menu == "dashboard" ? "active" : "") ">
+                            <a href="/admin" class='sidebar-link'>
+                                <i class="fa-solid fa-shapes"></i>
+                                <span>Tổng quan</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item @(ViewBag.Menu == "manage-admin" ? "active" : "")">
+                            <a href="/admin/manageuseradmin" class='sidebar-link'>
+                                <i class="fa-solid fa-user-secret"></i>
+                                <span>Tài khoản quản trị</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item  has-sub  @(ViewBag.Menu == "category" ? "active" : "")">
+                            <a href="#" class='sidebar-link'>
+                                <i class="fa-solid fa-rectangle-list"></i>
+                                <span>Quản lý danh mục</span>
+                            </a>
+                            <ul class="submenu @(ViewBag.Menu == "category" ? "active" : "")">
+                                <li class="submenu-item @(ViewBag.SubMenu == "service-category" ? "active" : "")">
+                                    <a href="/admin/servicecategory/">Danh mục dịch vụ</a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="sidebar-item  has-sub @(ViewBag.Menu == "manage-content" ? "active" : "")">
+                            <a href="#" class='sidebar-link'>
+                                <i class="fa-brands fa-stack-overflow"></i>
+                                <span>Quản lý nội dung</span>
+                            </a>
+                            <ul class="submenu @(ViewBag.Menu == "manage-content" ? "active" : "")">
+                                <li class="submenu-item @(ViewBag.SubMenu == "manage-news" ? "active" : "")">
+                                    <a href="/admin/ManageNews">Tin tức</a>
+                                </li>
+                                @*<li class="submenu-item @(ViewBag.SubMenu == "manage-slide" ? "active" : "")">
+                                        <a href="/admin/Slide">Slide</a>
+                                    </li>*@
+                                <li class="submenu-item @(ViewBag.SubMenu == "system-about" ? "active" : "")">
+                                    <a href="/admin/SystemAbout">Trang giới thiệu</a>
+                                </li>
+                                <li class="submenu-item @(ViewBag.SubMenu == "customer-feedback" ? "active" : "")">
+                                    <a href="/admin/customerFeedback">Phản hồi khách hàng</a>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                        <li class="sidebar-item @(ViewBag.Menu == "manage-doctor" ? "active" : "")">
+                            <a href="/admin/managedoctor" class='sidebar-link'>
+                                <i class="fa-solid fa-user-doctor"></i>
+                                <span>Quản lý bác sĩ</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item @(ViewBag.Menu == "manage-user" ? "active" : "")">
+                            <a href="/admin/manageuser" class='sidebar-link'>
+                                <i class="fa-solid fa-hospital-user"></i>
+                                <span>Quản lý người dùng</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item @(ViewBag.Menu == "manage-appointment" ? "active" : "")">
+                            <a href="/admin/adminmanageappointment/ManageAppointment" class='sidebar-link'>
+                                <i class="fa-solid fa-calendar"></i>
+                                <span>Quản lý lịch hẹn</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item @(ViewBag.Menu == "manage-service" ? "active" : "")">
+                            <a href="/admin/service" class='sidebar-link'>
+                                <i class="fa-brands fa-servicestack"></i>
+                                <span>Quản lý dịch vụ</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item  has-sub @(ViewBag.Menu == "report" ? "active" : "")">
+                            <a href="#" class='sidebar-link'>
+                                <i class="fa-solid fa-chart-pie"></i>
+                                <span>Báo cáo thống kê</span>
+                            </a>
+                            <ul class="submenu @(ViewBag.Menu == "report" ? "active" : "")">
+                                <li class="submenu-item @(ViewBag.SubMenu == "report-revenue" ? "active" : "")">
+                                    <a href="/admin/report">Thống kê doanh thu</a>
+                                </li>
+
+
+                            </ul>
+                        </li>
+
+                        <li class="sidebar-item  has-sub">
+                            <a href="#" class='sidebar-link' id="admin-name">
+                                <i class="fa-solid fa-user"></i>
+                            </a>
+                            <ul class="submenu">
+                                <li class="submenu-item">
+                                    <a onclick="OpenChangePasswordPopup();" class="dropdown-item d-block p-h-15 p-v-10">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div>
+                                                <i class="fa-solid fa-lock"></i>
+                                                <span class="m-l-10">Đổi mật khẩu</span>
+                                            </div>
+                                            <i class="anticon font-size-10 anticon-right"></i>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li class="submenu-item">
+                                    <a onclick="LogOut();" class="dropdown-item d-block p-h-15 p-v-10">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div>
+                                                <i class="fa-solid fa-right-from-bracket"></i>
+                                                <span class="m-l-10">Đăng xuất</span>
+                                            </div>
+                                            <i class="anticon font-size-10 anticon-right"></i>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
+            </div>
+        </div>
+        <div id="main" class='layout-navbar'>
+            <header class='mb-3'>
+                <nav class="navbar navbar-expand navbar-light ">
+                    <div class="container-fluid">
+                        <a href="#" class="burger-btn d-block">
+                            <i class="fa-solid fa-bars"></i>
+                        </a>
+
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                            </ul>
+                            <div class="dropdown">
+                                <a href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="user-menu d-flex">
+                                        <div class="user-name text-end me-3">
+                                            <h6 class="mb-0 text-gray-600" id="AdminName"></h6>
+                                            <p class="mb-0 text-sm text-gray-600" id="AdminRole"></p>
+                                        </div>
+                                    </div>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                                    <li>
+                                        <a class="dropdown-item" href="#" onclick="LogOut()">
+                                            <i class="icon-mid bi bi-box-arrow-left me-2"></i> Logout
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+            <div id="main-content">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="ChangePasswordPopup" style="display:none">
+        <div class="form">
+            <div class="form-header">
+                <div class="form-title">ĐỔI MẬT KHẨU</div>
+            </div>
+            <div class="form-body">
+                <div style="display:flex;gap:20px;flex-direction:column;">
+                    <div>
+                        <input class="form-control old-password" type="password" placeholder="Nhập mật khẩu cũ" />
+                    </div>
+                    <div>
+                        <input class="form-control  new-password" type="password" placeholder="Nhập mật khẩu mới" />
+                    </div>
+                    <div>
+                        <input class="form-control  confirm-password" type="password" placeholder="Xác nhận mật khẩu mới" />
+                    </div>
+                </div>
+
+            </div>
+            <div class="form-footer">
+                <div class="action">
+                    <a class="btn btn-default btn-sm" onclick="CloseChangePasswordPopup();">Đóng</a>
+                    <a class="btn btn-primary btn-sm" style="" onclick="ChangePassword(this);">Lưu</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        window.configCkFinder = {
+            extraPlugins: 'image2',
+            filebrowserBrowseUrl: '/Content/ckfinder/ckfinder.html',
+            filebrowserImageBrowseUrl: '/Content/ckfinder/ckfinder.html?Type=Images',
+            filebrowserUploadUrl: '/Content/ckfinder/core/connector/aspx/connector.aspx?command=QuickUpload&type=Files',
+            filebrowserImageUploadUrl: '/Content/ckfinder/core/connector/aspx/connector.aspx?command=QuickUpload&type=Images',
+            filebrowserWindowWidth: '1000',
+            filebrowserWindowHeight: '700'
+        };
+    </script>
+    <script src="~/Content/assets/js/jquery-3.6.0.min.js"></script>
+    <script src="/Content/ckeditor/ckeditor.js"></script>
+    <script src="~/Content/ckfinder/ckfinder.js"></script>
+    <script src="~/Content/assets/js/counterup.min.js"></script>
+    <script src="~/Content/assets/js/slicknav.min.js"></script>
+    <script src="~/Content/slick/slick.min.js"></script>
+    <script src="~/Content/assets/js/imagesloaded.pkgd.min.js"></script>
+    <script src="~/Content/assets/js/slick-slider.min.js"></script>
+    <script src="/Content/assets/vendors/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="/Content/assets/js/bootstrap.bundle.min.js"></script>
+    <script src="/content/assets/js/main.js"></script>
+    <script src="~/Content/assets/vendors/chartjs/Chart.min.js"></script>
+    <script src="~/Scripts/helper.js"></script>
+    <script src="~/Content/assets/js/isotope.min.js"></script>
+    <script src="~/Content/assets/js/magnific-popup.min.js"></script>
+    <script src="~/Content/slick/slick.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.5.6/tinymce.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script>
+        const OpenChangePasswordPopup = function () {
+            $('#ChangePasswordPopup').css('display', 'flex');
+        }
+        const CloseChangePasswordPopup = function () {
+            $('#ChangePasswordPopup').css('display', 'none');
+        }
+
+        const ChangePassword = async function (el) {
+            let model = {
+                OldPassword: $('#ChangePasswordPopup .old-password').val(),
+                NewPassword: $('#ChangePasswordPopup .new-password').val(),
+            }
+
+            const confirmPassword = $('#ChangePasswordPopup .confirm-password').val();
+
+            if (GetObjectProperty(model, 'OldPassword') === '') { alert('Mật khẩu cũ không được để trống'); return; }
+            if (GetObjectProperty(model, 'NewPassword') === '') { alert('Mật khẩu mới không được để trống'); return; }
+            if (confirmPassword === '') { alert('Xác nhận mật khẩu không được để trống'); return; }
+
+            if (confirmPassword !== GetObjectProperty(model, 'NewPassword')) { alert('Xác nhận mật khẩu không khớp'); return; }
+            $(el).addClass('is-loading');
+            let rq = await fetch('/api/adminhome/ChangePassword', {
+                method: 'post',
+                headers: Enum.OptionAdminHeaderDefault,
+                body: JSON.stringify(model)
+            });
+            let rs = await rq.json();
+            $(el).removeClass('is-loading');
+            if (AdminCheckErrorResponse(rs) === false) return;
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                CloseChangePasswordPopup();
+                alert('Cập nhật mật khẩu thành công');
+            }
+
+        }
+
+        const InitLayoutPage = async function () {
+
+            let rq = await fetch('/api/adminsystem/GetUserAdminInfo', {
+                method: 'get',
+                headers: Enum.OptionAdminHeaderDefault
+            });
+
+            let rs = await rq.json();
+
+
+            if (AdminCheckErrorResponse(rs) === false) return;
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                $('#admin-name').append(`<span>${rs.data.Name}</span>`);
+            }
+
+        }
+
+
+        const LogOut = async function () {
+            if (confirm('Bạn có chắc muốn đăng xuất khỏi hệ thống') === false) return;
+
+            let rq = await fetch('/api/adminsystem/logout', {
+                method: 'get',
+                headers: Enum.OptionAdminHeaderDefault
+            })
+            let rs = await rq.json();
+            if (AdminCheckErrorResponse(rs) === false) return;
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                EraseCookie('UserAdminToken');
+                window.location.href = '/admin/system/login';
+            }
+        }
+
+        InitLayoutPage();
+        const GetUserAdminInfo = async function () {
+
+            let rq = await fetch('/api/AdminSystem/GetUserAdminInfo', {
+                method: 'get',
+                headers: Enum.OptionAdminHeaderDefault
+            })
+            let rs = await rq.json();
+            if (AdminCheckErrorResponse(rs) === false) return;
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                $('#AdminName').text(rs.data.Name);
+                if (rs.data.Role == 'ADMIN') $('#AdminRole').text('Quản trị viên');
+                else $('#AdminRole').text('Nhân viên')
+            }
+        }
+        GetUserAdminInfo();
+    </script>
+    @RenderSection("scripts", false)
+</body>
+
+</html>
