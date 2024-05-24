@@ -44,6 +44,12 @@ namespace DentalClinic.Services
             return userListViewModel;
         }
 
+        public List<User> GetListUserNew()
+        {
+            string query = "SELECT [UserId],[Name],[SearchName],[Avatar],[Account],[Phone],[Password],[Email],[Status],[Token],[CreateTime]" +
+                ",[Enable],[Address],[Gender]  FROM [dbo].[user]";
+            return this._connection.Query<User>(query).ToList();
+        }
         public object GetUserById(string userId, IDbTransaction transaction = null)
         {
             string query = "select * from [user] where UserId = @userId";

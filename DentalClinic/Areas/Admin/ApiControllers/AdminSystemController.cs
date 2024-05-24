@@ -61,7 +61,7 @@ namespace DentalClinic.Areas.Admin.ApiControllers
             {
                 UserAdmin userAdmin = SecurityProvider.GetUserAdminByToken(Request);
                 if (userAdmin == null) return Unauthorized();
-                return Success(new { userAdmin.Name, userAdmin.Role });
+                return Success(new { userAdmin.Name, userAdmin.Role,userAdmin.Account });
             }
             catch (Exception ex)
             {

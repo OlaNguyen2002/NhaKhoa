@@ -8,6 +8,8 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Results;
+using System.Web.UI.WebControls;
+using System.Web.UI;
 
 namespace DentalClinic.Areas.Admin.ApiControllers
 {
@@ -31,6 +33,25 @@ namespace DentalClinic.Areas.Admin.ApiControllers
                 return Error();
             }
         }
+
+        [HttpGet]
+        [ApiAdminTokenRequire]
+        public JsonResult GetListUserNew()
+        {
+            try
+            {
+                UserAdminService userAdminService = new UserAdminService();
+                ManageUserService manageUserService = new ManageUserService();
+                UserAdmin userAdmin = SecurityProvider.GetUserAdminByToken(Request);
+                if (userAdmin == null) return Unauthorized();
+                return Success(manageUserService.GetListUserNew());
+            }
+            catch (Exception ex)
+            {
+                return Error();
+            }
+        }
+        
         [HttpGet]
         [ApiAdminTokenRequire]
         public JsonResult GetUserDetail(string userId)

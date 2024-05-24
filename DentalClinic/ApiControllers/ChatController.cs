@@ -15,6 +15,8 @@ using System.Net.WebSockets;
 using System.Web.Mvc;
 using Microsoft.Web.WebSockets;
 using System.Web.Script.Serialization;
+using Microsoft.ServiceModel.WebSockets;
+using System.Runtime.InteropServices;
 
 namespace DentalClinic.ApiControllers
 {
@@ -22,19 +24,19 @@ namespace DentalClinic.ApiControllers
     {
       //private static WebSocketCollection connections = new WebSocketCollection();
         protected static Dictionary<string, WebSocketHandler> listWebSocketUser = new Dictionary<string, WebSocketHandler>();
-
+        protected static Dictionary<string, WebSocketHandler> listWebSocketAdmin = new Dictionary<string, WebSocketHandler>();
         [HttpGet]
         [AllowAnonymous]
 
 
-        public async Task<HttpResponseMessage> Get(string account)
+        public async Task<HttpResponseMessage> Get(string account, string type)
         {
             //User user = SystemProvider.GetUserFromRequestHeader(Request.Headers);
 
 
             if (HttpContext.Current.IsWebSocketRequest)
             {
-                var noteHandler = new ChatSocketHandler(account);
+                var noteHandler = new ChatSocketHandler(account, type);
                 HttpContext.Current.AcceptWebSocketRequest(noteHandler);
             }
 
@@ -44,26 +46,68 @@ namespace DentalClinic.ApiControllers
 
         class ChatSocketHandler : WebSocketHandler {
             public string account;
-            public ChatSocketHandler(string _account) { this.account = _account; }
+            public string type;
+            public string typeAdmin = "ADMIN";
+            public string typeUser = "USER";
+            public ChatSocketHandler(string _account, string _type) { this.account = _account; this.type = _type; }
             public override void OnOpen()
             {
-                listWebSocketUser.Add(account, this);
+
+
+                if (type == typeUser)
+                {
+                    if (!listWebSocketUser.ContainsKey(account))
+                    {
+                        listWebSocketUser.Add(account, this);
+                    }
+                    else
+                    {
+                        listWebSocketUser[account] = this;
+                    }
+                }
+                else if (type == typeAdmin)
+                {
+                    if (!listWebSocketAdmin.ContainsKey(account))
+                    {
+                        listWebSocketAdmin.Add(account, this);
+                    }
+                    else
+                    {
+                        listWebSocketAdmin[account] = this;
+                    }
+                }
             }
             public override void OnMessage(string message)
             {
                 MessageModel socketAction = new JavaScriptSerializer().Deserialize<MessageModel>(message);
-           
 
-                string retunrAction = new JavaScriptSerializer().Serialize(socketAction);
 
-                listWebSocketUser[socketAction.receiveAccount].Send(message);
-                
-               /* foreach (var connection in listWebSocketUser)
+                // string retunrAction = new JavaScriptSerializer().Serialize(socketAction);
+
+                //  listWebSocketUser[socketAction.receiveAccount].Send(message);
+
+                if (type == typeUser)
                 {
-                
-                    connection.Value.Send(message);
+                    foreach (var connection in listWebSocketAdmin.Values)
+                    {
+                        connection.Send(message);
+                    }
+                    listWebSocketUser[account].Send(message);
                 }
-                */
+                else if (type == typeAdmin)
+                {
+                    if (listWebSocketUser.ContainsKey(socketAction.receiveAccount))
+                    {
+                        listWebSocketUser[socketAction.receiveAccount].Send(message);
+                    }
+                    foreach (var connection in listWebSocketAdmin.Values)
+                    {
+                        connection.Send(message);
+                    }
+                }
+
+
+
             }
         }
 
@@ -73,7 +117,6 @@ namespace DentalClinic.ApiControllers
     public class MessageModel
     {
         public string account { get; set; }
-        public string name { get; set; }
         public string message { get; set; }
         public string receiveAccount { get; set; }
     }

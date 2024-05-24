@@ -33,5 +33,6 @@ namespace DentalClinic.Controllers
             ViewBag.ListRelatedNews = lsNewsUpdate;
             return View();
         }
+
     }
 }

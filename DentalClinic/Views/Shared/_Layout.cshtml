@@ -169,6 +169,7 @@
         ul.dropdown-menu.last.menu-custom {
             transform: translate(-150px,60px);
         }
+
         .burger-btn {
             width: 30px;
             height: 30px;
@@ -209,16 +210,22 @@
             margin-right: 40px;
         }
 
-        .icon-chat {
+        .icon {
+            height: 50px;
             position: fixed;
-            right: 44px;
-            bottom: 97px;
-            display: flex;
+            flex-direction: column;
+            justify-content: center;
             background-color: #309f5d;
             color: #fff;
             padding: 10px;
             margin: 5px;
             border-radius: 10px;
+        }
+
+        .icon-chat {
+            right: 43px;
+            bottom: 89px;
+            display: flex;
         }
 
         .icon:hover {
@@ -235,27 +242,21 @@
             right: 0;
             width: 540px;
             height: 510px;
+            z-index: 99;
         }
 
-        .chat-custom-backdrop {
-            width: 100%;
-            height: 100%;
-            background-color: #00000060;
-            position: absolute;
-        }
-
-        .modal-chat-container .modal-custom-chat {
-            display: flex;
-            border-radius: 30px;
-            flex-direction: column;
-            background-color: #fff;
-            animation: growth linear 0.2s;
-            --growth-from: 0.5;
-            --growth-to: 1;
-            border: 3px solid #309f5d;
-            width: 100%;
-            height: 100%;
-        }
+            .modal-chat-container .modal-custom-chat {
+                display: flex;
+                border-radius: 30px;
+                flex-direction: column;
+                background-color: #fff;
+                animation: growth linear 0.2s;
+                --growth-from: 0.5;
+                --growth-to: 1;
+                border: 3px solid #309f5d;
+                width: 100%;
+                height: 100%;
+            }
 
         .chat-header {
             display: flex;
@@ -269,6 +270,7 @@
             }
 
             .chat-header button {
+                width: 50px;
                 background-color: #fff;
                 border: none;
                 border-top-right-radius: 30px;
@@ -279,109 +281,25 @@
                     color: #fff;
                 }
 
-        .box-chat {
-            overflow-y: auto;
-            border-bottom: 1px solid #309f5d;
-            max-height: 357px;
-            background-color: #f3f3f3;
-            flex: 1;
-        }
         .body-chat {
             display: flex;
+            height: 100%;
         }
 
-
-        .chat-messages {
-            color: #fff;
-            list-style: none;
-            position: relative;
+        .content-box-chat {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 0;
         }
 
-        .chat-messages-left {
+        .box-chat {
+            flex: 2;
         }
-
-            .chat-messages-left > .message {
-                background-color: #171c19;
-                width: fit-content;
-                max-width: 320px;
-                padding: 10px;
-                border-radius: 10px;
-                color: #fff;
-            }
-
-        .chat-messages-right {
-            display: flex;
-            justify-content: flex-end;
-        }
-
-            .chat-messages-right > .message {
-                background-color: #309f5d;
-                width: fit-content;
-                max-width: 300px;
-                padding: 10px;
-                border-radius: 10px;
-                color: #fff;
-            }
-
-
-        .chat-messages-right, .chat-messages-left {
-            padding: 3px;
-            color: black;
-            position: relative;
-        }
-
-
-        .showtime {
-            background-color: #808080;
-            color: #fff;
-            display: none;
-            bottom: 0;
-            position: absolute;
-            padding: 5px;
-            border-radius: 10px;
-            font-size: 12px;
-        }
-
-        .chat-messages-right:hover .showtime, .chat-messages-left:hover .showtime {
-            display: flex;
-        }
-
 
         .chat-footer {
             display: flex;
-            justify-content: center;
-            width: 100%;
-            position: relative;
+            flex-direction: row;
         }
-
-        .chat-input {
-            width: calc(100% - 20px);
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-            font-size: 16px;
-            resize: none;
-            overflow-y: auto;
-            max-height: 50px;
-            min-height: 40px;
-            margin: 10px;
-            height: 0px;
-            font-size: 12px;
-        }
-
-        .send-button {
-            border-bottom-right-radius: 30px;
-            background-color: #fff;
-            border: none;
-        }
-
-            .send-button:hover {
-                background-color: #309f5d;
-                color: #fff;
-            }
     </style>
     @RenderSection("styles", false)
 </head>
@@ -683,13 +601,13 @@
                                         <div class="row">
                                             <div class="col-lg-6 col-md-6">
                                                 <div class="site-info-left">
-                                                    Nha khoa Phương Thảo | Developed by: <a target="_blank" href="https://wrapdiv.com/">pphuongthao</a>
+                                                    Nha khoa Hữu Tuấn | Developed by: <a target="_blank" href="https://wrapdiv.com/">olanguyen</a>
                                                 </div>
                                             </div>
 
                                             <div class="col-lg-6 col-md-6">
                                                 <div class="site-copyright-text">
-                                                    © Nha khoa Phương Thảo 2023 | All Right Reserved
+                                                    © Nha khoa Hữu Tuấn 2024 | All Right Reserved
                                                 </div>
                                             </div>
                                         </div>
@@ -709,27 +627,25 @@
     </div><!--Site Wrapper End-->
     <!-- Template Scripts -->
 
-    <div class="icon icon-chat" onclick="">
+    <div class="icon icon-chat" onclick="openModalChat(); ">
         <i class="fa-brands fa-rocketchat"></i>
     </div>
+
     <div class="modal-chat-container" style="display:none;">
         <div class="modal-custom-chat">
             <div class="chat-header">
                 <h2>Chat</h2>
-                <button onclick=""><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="closeModalchat();"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="body-chat">
                 <div class="content-box-chat">
-                    <div class="show-name-user">
-                        <div class="name-user"></div>
-                    </div>
                     <div class="box-chat">
                         <ul class="chat-messages" id="chatMessages">
                         </ul>
                     </div>
                     <div class="chat-footer">
                         <textarea class="chat-input" id="messageInput" placeholder="Type your message..."></textarea>
-                        <button class="send-button" onclick=""><i class="fa-regular fa-paper-plane"></i></button>
+                        <button class="send-button" onclick="SendMessage();"><i class="fa-regular fa-paper-plane"></i></button>
                     </div>
                 </div>
             </div>
@@ -754,7 +670,9 @@
     <script src="~/Content/assets/vendors/sweetalert2/sweetalert2.all.min.js"></script>
     @RenderSection("scripts", false)
     <script>
-
+        let _account;
+        let _webSocket;
+        let _type = 'USER';
         const openModalChat = () => {
             // $('.examname').val('');
             // $('.examtime').val('');
@@ -763,6 +681,9 @@
 
         }
 
+        const closeModalchat = () => {
+            $('.modal-chat-container').css('display', 'none')
+        }
 
         const GetUserLayoutInfo = async function () {
             let rq = await fetch('/api/user/GetInforUser', {
@@ -770,12 +691,18 @@
                 headers: Enum.OptionHeaderDefault,
             });
             let rs = await rq.json();
+            console.log(rs);
             if (CheckErrorResponse(rs) === false) return;
 
             if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
                 $('#avatar-user').attr('src', GetObjectProperty(rs.data, 'Avatar'));
                 $('#user-name').text(GetObjectProperty(rs.data, 'Name'));
                 $('#user-account').text(GetObjectProperty(rs.data, 'Account'));
+                if (GetObjectProperty(rs.data, 'Account') !== '') {
+                    _account = GetObjectProperty(rs.data, 'Account')
+                    ChatSocket(GetObjectProperty(rs.data, 'Account'));
+                }
+
             }
         }
         const GetListServiceCategory = async function () {
@@ -789,8 +716,8 @@
             $("#idService").html('')
             for (let i = 0; i < rs.data.length; i++) {
                 $('#idService').append(`
-                                           <li><a href="/dich-vu/danh-sach?Currentpage=1&ServiceCategoryId=${rs.data[i].ServiceCategoryId}">${rs.data[i].Name}</a></li>
-                                   `)
+                                                   <li><a href="/dich-vu/danh-sach?Currentpage=1&ServiceCategoryId=${rs.data[i].ServiceCategoryId}">${rs.data[i].Name}</a></li>
+                                           `)
             }
         }
         const numberNotification = async function () {
@@ -813,6 +740,8 @@
             await GetUserLayoutInfo();
             await GetListServiceCategory();
             await numberNotification();
+
+
         }
         InitPage();
         const LogOut = async () => {
@@ -828,6 +757,39 @@
                 window.location.href = '/dang-nhap';
             }
         }
+
+        const ChatSocket = (account) => {
+
+
+
+            _webSocket = new WebSocket(`/api/chat/get?account=${account}&type=${_type}`)
+
+            _webSocket.onopen = function (rs) {
+                console.log('onopen', rs)
+            }
+            _webSocket.onmessage = function (rs) {
+                console.log('onmessage', rs)
+
+                const data = JSON.parse(rs.data);
+
+                $('#chatMessages').prepend(`<li>
+                    <label>${data.account}</label>
+                    <i>${data.message}</i>
+                    </li>`)
+
+            }
+        }
+
+        const SendMessage = function () {
+            const message = $('#messageInput').val();
+            const data = {
+                account: _account,
+                message: message
+            };
+
+            _webSocket.send(JSON.stringify(data));
+        }
+
     </script>
 </body>
 

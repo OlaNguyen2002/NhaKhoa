@@ -95,6 +95,269 @@
         .sidebar-wrapper .sidebar-header img {
             height: 3.2rem !important;
         }
+
+        .icon-chat {
+            height: 50px;
+            position: fixed;
+            flex-direction: column;
+            justify-content: center;
+            background-color: #309f5d;
+            color: #fff;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 10px;
+        }
+
+        .icon-chat {
+            right: 0;
+            bottom: 0;
+            display: flex;
+        }
+
+        .icon:hover {
+            cursor: pointer;
+        }
+
+        i.fa-rocketchat {
+            font-size: 30px;
+        }
+
+        .modal-chat-container {
+            position: fixed;
+            bottom: 0px;
+            right: 0;
+            width: 540px;
+            height: 510px;
+        }
+
+            .modal-chat-container .modal-custom-chat {
+                display: flex;
+                border-radius: 30px;
+                flex-direction: column;
+                background-color: #fff;
+                animation: growth linear 0.2s;
+                --growth-from: 0.5;
+                --growth-to: 1;
+                border: 3px solid #309f5d;
+                width: 100%;
+                height: 100%;
+            }
+
+        .chat-header {
+            display: flex;
+            justify-content: center;
+        }
+
+            .chat-header h2 {
+                flex: 1;
+                text-align: center;
+                color: #309f5d;
+            }
+
+            .chat-header button {
+                background-color: #fff;
+                border: none;
+                border-top-right-radius: 30px;
+            }
+
+                .chat-header button:hover {
+                    background-color: #309f5d;
+                    color: #fff;
+                }
+
+        .box-chat {
+            overflow-y: auto;
+            border-bottom: 1px solid #309f5d;
+            max-height: 357px;
+            background-color: #f3f3f3;
+            flex: 1;
+        }
+
+        .body-chat {
+            height:100%;
+            display: flex;
+        }
+
+        .user-chat {
+            display: flex;
+            width: 225px;
+            flex-direction: column;
+            padding: 3px;
+        }
+
+        .search-chat-input {
+            border: 2px solid #309f5d;
+            padding: 3px;
+            border-radius: 5px;
+        }
+
+        #search-input {
+            border: none;
+        }
+
+        input[type="text"]:focus {
+            outline: none; /* Loại bỏ viền khi được focus */
+        }
+
+        .list-user-chat {
+            display: flex;
+            padding: 10px;
+            flex-direction: column;
+            max-height: 413px;
+            overflow-y: auto;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            background: #888;
+        }
+            ::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
+
+
+
+
+        .detail-user-chat:hover {
+            cursor: pointer;
+            background-color: #f5f5f5;
+        }
+
+        .detail-user-chat {
+            width: 100%;
+            display: flex;
+            gap: 20px;
+            padding: 10px 0 10px 0;
+        }
+
+        .content-box-chat {
+            border-top: 1px solid #309f5d;
+            border-left: 1px solid #309f5d;
+            display: none;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .show-name-user {
+            height: 40px;
+            width: 100%;
+        }
+
+        .name-user {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding-left: 12px
+        }
+
+        .information-chat {
+            font-weight: bold;
+        }
+
+        .chat-messages {
+            /*color: #fff;*/
+            list-style: none;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+
+        .chat-messages-left {
+        }
+
+            .chat-messages-left > .message {
+                background-color: #171c19;
+                width: fit-content;
+                max-width: 320px;
+                padding: 10px;
+                border-radius: 10px;
+                color: #fff;
+            }
+
+        .chat-messages-right {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+            .chat-messages-right > .message {
+                background-color: #309f5d;
+                width: fit-content;
+                max-width: 300px;
+                padding: 10px;
+                border-radius: 10px;
+                color: #fff;
+            }
+
+
+        .chat-messages-right, .chat-messages-left {
+            padding: 3px;
+            color: black;
+            position: relative;
+        }
+
+
+        .showtime {
+            background-color: #808080;
+            color: #fff;
+            display: none;
+            bottom: 0;
+            position: absolute;
+            padding: 5px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        .chat-messages-right:hover .showtime, .chat-messages-left:hover .showtime {
+            display: flex;
+        }
+
+
+        .chat-footer {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            position: relative;
+        }
+
+        .chat-input {
+            width: calc(100% - 20px);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            resize: none;
+            overflow-y: auto;
+            max-height: 50px;
+            min-height: 40px;
+            margin: 10px;
+            height: 0px;
+            font-size: 12px;
+        }
+
+        .send-button {
+            border-bottom-right-radius: 30px;
+            background-color: #fff;
+            border: none;
+        }
+
+            .send-button:hover {
+                background-color: #309f5d;
+                color: #fff;
+            }
+
     </style>
     @RenderSection("styles", false)
 </head>
@@ -307,6 +570,46 @@
         </div>
 
     </div>
+
+    <div class="icon icon-chat" onclick="openModalChat(); ">
+        <i class="fa-brands fa-rocketchat"></i>
+    </div>
+    <div class="modal-chat-container" style="display:none;">
+        <div class="modal-custom-chat">
+            <div class="chat-header">
+                <h2>Chat</h2>
+                <button onclick="closeModalchat();"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="body-chat">
+                <div class="user-chat">
+                    <div class="search-chat">
+                        <div class="search-chat-input">
+                            <span class="search-icon">
+                                <i style="color:#309f5d;" class="fas fa-search"></i>
+                            </span>
+                            <input id="search-input" type="text" placeholder="Tìm kiếm">
+                        </div>
+                    </div>
+                    <div class="list-user-chat">
+                    </div>
+                </div>
+                <div class="content-box-chat">
+                    <div class="show-name-user">
+                        <div class="name-user"></div>
+                    </div>
+                    <div class="box-chat">
+                        <ul class="chat-messages" id="chatMessages">
+                        </ul>
+                    </div>
+                    <div class="chat-footer">
+                        <textarea class="chat-input" id="messageInput" placeholder="Type your message..."></textarea>
+                        <button class="send-button" onclick="SendMessage();"><i class="fa-regular fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         window.configCkFinder = {
             extraPlugins: 'image2',
@@ -339,6 +642,24 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script>
+
+        let _type = 'ADMIN';
+        let _receiveAccount = '';
+        let _account;
+        let _webSocket;
+
+        const openModalChat = () => {
+            // $('.examname').val('');
+            // $('.examtime').val('');
+            $('.modal-chat-container').css('display', 'flex');
+            // check = 'insert';
+
+        }
+
+        const closeModalchat = () => {
+            $('.modal-chat-container').css('display', 'none')
+        }
+
         const OpenChangePasswordPopup = function () {
             $('#ChangePasswordPopup').css('display', 'flex');
         }
@@ -422,8 +743,95 @@
                 if (rs.data.Role == 'ADMIN') $('#AdminRole').text('Quản trị viên');
                 else $('#AdminRole').text('Nhân viên')
             }
+
+            if (GetObjectProperty(rs.data, 'Account') !== '') {
+                _account = GetObjectProperty(rs.data, 'Account')
+                ChatSocket(GetObjectProperty(rs.data, 'Account'));
+            }
         }
         GetUserAdminInfo();
+
+
+        const GetListFriend = async function () {
+            let rq = await fetch('/api/ManageUser/GetListUserNew', {
+                method: 'get',
+                headers: Enum.OptionAdminHeaderDefault
+            })
+            let rs = await rq.json();
+            console.log(rs);
+            $('.list-user-chat').html('');
+            // console.log(rs)
+            for (var i = 0; i < rs.data.length; i++) {
+                var stt = i + 1;
+                const rowitem = rs.data[i];
+                $('.list-user-chat').append(`
+                                                         <div class="detail-user-chat" data-account="${rowitem.Account}" onclick="getFriend(this);">
+                                                               <div class="avatar-user-chat">
+                                                                     <i class="fa-solid fa-user"></i>
+                                                               </div>
+                                                               <div class="information-chat">
+                                                                    <div class="user-name-chat">${rowitem.Name}</div>
+                                                                     </div>
+                                                                </div>
+                                                                                            `)
+            }
+        }
+        GetListFriend();
+
+        const getFriend = (el) => {
+            debugger;
+            _receiveAccount = $(el).data('account');
+            // Lấy tên người dùng từ thẻ được nhấp
+            const userName = $(el).find('.user-name-chat').text();
+            // Hiển thị tên người dùng trong khung chat
+            $('.show-name-user .name-user').text(userName);
+            $('.content-box-chat').css('display', 'flex');
+            if ($('.show-name-user .name-user').val() != userName) {
+                //xoá tin nhắn hiện tại
+                clearChatMessages();
+            } return
+        }
+
+
+        //  xóa
+        const clearChatMessages = () => {
+            $('#chatMessages').empty();
+        }
+
+
+        const ChatSocket = (account) => {
+
+
+
+            _webSocket = new WebSocket(`/api/chat/get?account=${account}&type=${_type}`)
+
+            _webSocket.onopen = function (rs) {
+                console.log('onopen', rs)
+            }
+            _webSocket.onmessage = function (rs) {
+                console.log('onmessage', rs)
+
+                const data = JSON.parse(rs.data);
+
+                $('#chatMessages').prepend(`<li>
+            <label>${data.account}</label>
+            <i>${data.message}</i>
+            </li>`)
+
+            }
+        }
+
+        const SendMessage = function () {
+            const message = $('#messageInput').val();
+            const data = {
+                account: _account,
+                message: message,
+                receiveAccount: _receiveAccount
+            }
+
+            _webSocket.send(JSON.stringify(data))
+        }
+
     </script>
     @RenderSection("scripts", false)
 </body>
