@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="/Content/assets/css/app.css">
     <link rel="shortcut icon" href="/Content/assets/images/favicon.svg" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-
+    <link href="~/Content/css/admin-desktop.css" rel="stylesheet" />
     <style>
         .submenu .submenu-item {
             cursor: pointer;
@@ -174,7 +174,7 @@
         }
 
         .body-chat {
-            height:100%;
+            height: 100%;
             display: flex;
         }
 
@@ -199,13 +199,7 @@
             outline: none; /* Loại bỏ viền khi được focus */
         }
 
-        .list-user-chat {
-            display: flex;
-            padding: 10px;
-            flex-direction: column;
-            max-height: 413px;
-            overflow-y: auto;
-        }
+
 
         ::-webkit-scrollbar {
             width: 5px;
@@ -222,24 +216,10 @@
             border-radius: 10px;
             background: #888;
         }
+
             ::-webkit-scrollbar-thumb:hover {
                 background: #555;
             }
-
-
-
-
-        .detail-user-chat:hover {
-            cursor: pointer;
-            background-color: #f5f5f5;
-        }
-
-        .detail-user-chat {
-            width: 100%;
-            display: flex;
-            gap: 20px;
-            padding: 10px 0 10px 0;
-        }
 
         .content-box-chat {
             border-top: 1px solid #309f5d;
@@ -249,115 +229,7 @@
             flex: 1;
         }
 
-        .show-name-user {
-            height: 40px;
-            width: 100%;
-        }
-
-        .name-user {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            padding-left: 12px
-        }
-
-        .information-chat {
-            font-weight: bold;
-        }
-
-        .chat-messages {
-            /*color: #fff;*/
-            list-style: none;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            padding: 0;
-        }
-
-        .chat-messages-left {
-        }
-
-            .chat-messages-left > .message {
-                background-color: #171c19;
-                width: fit-content;
-                max-width: 320px;
-                padding: 10px;
-                border-radius: 10px;
-                color: #fff;
-            }
-
-        .chat-messages-right {
-            display: flex;
-            justify-content: flex-end;
-        }
-
-            .chat-messages-right > .message {
-                background-color: #309f5d;
-                width: fit-content;
-                max-width: 300px;
-                padding: 10px;
-                border-radius: 10px;
-                color: #fff;
-            }
-
-
-        .chat-messages-right, .chat-messages-left {
-            padding: 3px;
-            color: black;
-            position: relative;
-        }
-
-
-        .showtime {
-            background-color: #808080;
-            color: #fff;
-            display: none;
-            bottom: 0;
-            position: absolute;
-            padding: 5px;
-            border-radius: 10px;
-            font-size: 12px;
-        }
-
-        .chat-messages-right:hover .showtime, .chat-messages-left:hover .showtime {
-            display: flex;
-        }
-
-
-        .chat-footer {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            position: relative;
-        }
-
-        .chat-input {
-            width: calc(100% - 20px);
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-            font-size: 16px;
-            resize: none;
-            overflow-y: auto;
-            max-height: 50px;
-            min-height: 40px;
-            margin: 10px;
-            height: 0px;
-            font-size: 12px;
-        }
-
-        .send-button {
-            border-bottom-right-radius: 30px;
-            background-color: #fff;
-            border: none;
-        }
-
-            .send-button:hover {
-                background-color: #309f5d;
-                color: #fff;
-            }
-
+      
     </style>
     @RenderSection("styles", false)
 </head>
@@ -466,8 +338,9 @@
                         </li>
 
                         <li class="sidebar-item  has-sub">
-                            <a href="#" class='sidebar-link' id="admin-name">
+                            <a href="#" class='sidebar-link' >
                                 <i class="fa-solid fa-user"></i>
+                                <span class="admin-name"></span>
                             </a>
                             <ul class="submenu">
                                 <li class="submenu-item">
@@ -519,8 +392,8 @@
                                 <a href="#" data-bs-toggle="dropdown" aria-expanded="false">
                                     <div class="user-menu d-flex">
                                         <div class="user-name text-end me-3">
-                                            <h6 class="mb-0 text-gray-600" id="AdminName"></h6>
-                                            <p class="mb-0 text-sm text-gray-600" id="AdminRole"></p>
+                                            <h6 class="mb-0 text-gray-600 admin-name" ></h6>
+                                            <p class="mb-0 text-sm text-gray-600" id="admin-role"></p>
                                         </div>
                                     </div>
                                 </a>
@@ -574,41 +447,33 @@
     <div class="icon icon-chat" onclick="openModalChat(); ">
         <i class="fa-brands fa-rocketchat"></i>
     </div>
-    <div class="modal-chat-container" style="display:none;">
-        <div class="modal-custom-chat">
-            <div class="chat-header">
-                <h2>Chat</h2>
+    <div class="chat-modal" id="chat-box" style="display:none;">
+        <div class="chat-form">
+            <div class="chat-form-header">
+                <h3>Chat</h3>
                 <button onclick="closeModalchat();"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="body-chat">
-                <div class="user-chat">
-                    <div class="search-chat">
-                        <div class="search-chat-input">
-                            <span class="search-icon">
-                                <i style="color:#309f5d;" class="fas fa-search"></i>
-                            </span>
-                            <input id="search-input" type="text" placeholder="Tìm kiếm">
-                        </div>
-                    </div>
-                    <div class="list-user-chat">
-                    </div>
+            <div class="chat-form-body">
+                <div class="list-user-chat">
+                    <ul id="list-user-chat"></ul>
                 </div>
-                <div class="content-box-chat">
-                    <div class="show-name-user">
-                        <div class="name-user"></div>
-                    </div>
-                    <div class="box-chat">
-                        <ul class="chat-messages" id="chatMessages">
+
+                <div class="chat-box">
+                    <div class="chat-box-header"></div>
+                    <div class="chat-box-body">
+                        <ul id="list-message">
+                           
                         </ul>
                     </div>
-                    <div class="chat-footer">
-                        <textarea class="chat-input" id="messageInput" placeholder="Type your message..."></textarea>
-                        <button class="send-button" onclick="SendMessage();"><i class="fa-regular fa-paper-plane"></i></button>
+                    <div class="chat-box-footer">
+                        <textarea id="messageInput" placeholder="Type your message..."></textarea>
+                        <button onclick="SendMessage();"><i class="fa-regular fa-paper-plane"></i></button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 
     <script>
         window.configCkFinder = {
@@ -647,17 +512,17 @@
         let _receiveAccount = '';
         let _account;
         let _webSocket;
-
+        let _listConversation = [];
         const openModalChat = () => {
             // $('.examname').val('');
             // $('.examtime').val('');
-            $('.modal-chat-container').css('display', 'flex');
+            $('#chat-box').css('display', 'flex');
             // check = 'insert';
 
         }
 
         const closeModalchat = () => {
-            $('.modal-chat-container').css('display', 'none')
+            $('#chat-box').css('display', 'none')
         }
 
         const OpenChangePasswordPopup = function () {
@@ -698,19 +563,8 @@
 
         const InitLayoutPage = async function () {
 
-            let rq = await fetch('/api/adminsystem/GetUserAdminInfo', {
-                method: 'get',
-                headers: Enum.OptionAdminHeaderDefault
-            });
-
-            let rs = await rq.json();
-
-
-            if (AdminCheckErrorResponse(rs) === false) return;
-            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
-                $('#admin-name').append(`<span>${rs.data.Name}</span>`);
-            }
-
+            GetUserAdminInfo();
+            GetListFriend();
         }
 
 
@@ -729,7 +583,6 @@
             }
         }
 
-        InitLayoutPage();
         const GetUserAdminInfo = async function () {
 
             let rq = await fetch('/api/AdminSystem/GetUserAdminInfo', {
@@ -739,9 +592,9 @@
             let rs = await rq.json();
             if (AdminCheckErrorResponse(rs) === false) return;
             if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
-                $('#AdminName').text(rs.data.Name);
-                if (rs.data.Role == 'ADMIN') $('#AdminRole').text('Quản trị viên');
-                else $('#AdminRole').text('Nhân viên')
+                $('.admin-name').text(rs.data.Name);
+                if (rs.data.Role == 'ADMIN') $('#admin-role').text('Quản trị viên');
+                else $('#admin-role').text('Nhân viên')
             }
 
             if (GetObjectProperty(rs.data, 'Account') !== '') {
@@ -749,8 +602,7 @@
                 ChatSocket(GetObjectProperty(rs.data, 'Account'));
             }
         }
-        GetUserAdminInfo();
-
+       
 
         const GetListFriend = async function () {
             let rq = await fetch('/api/ManageUser/GetListUserNew', {
@@ -758,38 +610,35 @@
                 headers: Enum.OptionAdminHeaderDefault
             })
             let rs = await rq.json();
-            console.log(rs);
-            $('.list-user-chat').html('');
-            // console.log(rs)
+            $('#list-user-chat').html('');
+            _listConversation = [];
             for (var i = 0; i < rs.data.length; i++) {
                 var stt = i + 1;
                 const rowitem = rs.data[i];
-                $('.list-user-chat').append(`
-                                                         <div class="detail-user-chat" data-account="${rowitem.Account}" onclick="getFriend(this);">
-                                                               <div class="avatar-user-chat">
-                                                                     <i class="fa-solid fa-user"></i>
-                                                               </div>
-                                                               <div class="information-chat">
-                                                                    <div class="user-name-chat">${rowitem.Name}</div>
-                                                                     </div>
-                                                                </div>
-                                                                                            `)
+                $('#list-user-chat').append(`<li>
+<div class="detail-user-chat" data-account="${rowitem.Account}" onclick="getFriend(this);">
+<div class="avatar-user-chat"><i class="fa-solid fa-user"></i></div>
+<div class="information-chat">
+<div class="user-name-chat">${rowitem.Name}</div>
+<div class="notification-count" style="display:none;" ></div>
+</div>
+</div></li>`)
+
+                _listConversation[rowitem.Account] = []
+
             }
         }
-        GetListFriend();
+        
 
         const getFriend = (el) => {
-            debugger;
             _receiveAccount = $(el).data('account');
-            // Lấy tên người dùng từ thẻ được nhấp
-            const userName = $(el).find('.user-name-chat').text();
-            // Hiển thị tên người dùng trong khung chat
-            $('.show-name-user .name-user').text(userName);
-            $('.content-box-chat').css('display', 'flex');
-            if ($('.show-name-user .name-user').val() != userName) {
-                //xoá tin nhắn hiện tại
-                clearChatMessages();
-            } return
+            $('#chat-box .chat-box-header').text(_receiveAccount);
+            $(`.detail-user-chat[data-account=${_receiveAccount}] .notification-count`).text('')
+            $(`.detail-user-chat[data-account=${_receiveAccount}] .notification-count`).hide();
+            $(el).closest('li').siblings().removeClass('active')
+            $(el).closest('li').addClass('active')
+
+            RenderConversation(_receiveAccount);
         }
 
 
@@ -803,7 +652,7 @@
 
 
 
-            _webSocket = new WebSocket(`/api/chat/get?account=${account}&type=${_type}`)
+            _webSocket = new WebSocket(`wss://${window.location.host}/api/chat/get?account=${account}&type=${_type}`)
 
             _webSocket.onopen = function (rs) {
                 console.log('onopen', rs)
@@ -813,25 +662,93 @@
 
                 const data = JSON.parse(rs.data);
 
-                $('#chatMessages').prepend(`<li>
-            <label>${data.account}</label>
-            <i>${data.message}</i>
-            </li>`)
+                if (data.senderType === 'ADMIN') {
+                    _listConversation[data.receiveAccount].push(data);
+                    if ($('#chat-box .chat-box-header').text() === data.receiveAccount) {
+                        $('#list-message').append(`<li>
+    <div class="message admin">
+        <div class="bubble">
+            <div class="text">${data.message}</div>
+            <div class="account">${data.account}</div>
+        </div>
+    </div>
+</li>`)
+                    }
+                }
+                else if (data.senderType === 'USER') {
+                    _listConversation[data.account].push(data);
+                    if ($('#chat-box .chat-box-header').text() === data.account) {
+                        $('#list-message').append(`
+                            <li>
+    <div class="message user">
+        <div class="bubble">
+            <div class="text">${data.message}</div>
+        </div>
+    </div>
+</li>`)
+                    } else {
+                        let countNotification = $(`.detail-user-chat[data-account=${data.account}] .notification-count`).text()
+                        if (countNotification === '') countNotification = '0';
+                        countNotification = parseInt(countNotification) + 1;
+                        $(`.detail-user-chat[data-account=${data.account}] .notification-count`).text(countNotification)
+                        $(`.detail-user-chat[data-account=${data.account}] .notification-count`).show();
+                    }
+                }
 
+                
+
+              
+                
             }
+        }
+
+        const RenderConversation = (receiveAccount) => {
+            const listMessage = _listConversation[receiveAccount];
+            $('#chat-box .chat-box-header').text(receiveAccount);
+            $('#list-message').html('');
+            for (let i = 0; i < listMessage.length; i++) {
+                const data = listMessage[i]
+                if (data.senderType === 'ADMIN') {
+                    $('#list-message').append(`<li>
+    <div class="message admin">
+        <div class="bubble">
+            <div class="text">${data.message}</div>
+            <div class="account">${data.account}</div>
+        </div>
+    </div>
+</li>`)
+                }
+                else if (data.senderType === 'USER') {
+                    $('#list-message').append(`
+                            <li>
+    <div class="message user">
+        <div class="bubble">
+            <div class="text">${data.message}</div>
+        </div>
+    </div>
+</li>`)
+                }
+            }
+            $("#list-message").animate({ scrollTop: $("#list-message")[0].scrollHeight }, 500);
         }
 
         const SendMessage = function () {
             const message = $('#messageInput').val();
+
+            if (_receiveAccount === '' || message === '') return;
+
             const data = {
                 account: _account,
                 message: message,
-                receiveAccount: _receiveAccount
+                receiveAccount: _receiveAccount,
+                senderType: _type
             }
 
             _webSocket.send(JSON.stringify(data))
+            $('#messageInput').val('');
         }
 
+        InitLayoutPage();
     </script>
     @RenderSection("scripts", false)
 </body>

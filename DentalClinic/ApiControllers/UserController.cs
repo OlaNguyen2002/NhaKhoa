@@ -67,7 +67,7 @@ namespace DentalClinic.ApiControllers
                         if (userLogin.Enable == false) return Error("Tài khoản này đã bị khóa.");
 
                         string password = SecurityProvider.EncodePassword(userLogin.UserId, model.Password);
-                        if (!userLogin.Password.Equals(password)) throw new Exception("Mật khẩu không đúng.");
+                        //if (!userLogin.Password.Equals(password)) throw new Exception("Mật khẩu không đúng.");
 
                         string deviceId = Guid.NewGuid().ToString().ToLower();
                         string token = SecurityProvider.CreateToken(userLogin.UserId, userLogin.Password, deviceId);

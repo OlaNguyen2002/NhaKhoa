@@ -119,5 +119,6 @@ namespace DentalClinic.ApiControllers
         public string account { get; set; }
         public string message { get; set; }
         public string receiveAccount { get; set; }
+        public string senderType { get; set; }
     }
 }

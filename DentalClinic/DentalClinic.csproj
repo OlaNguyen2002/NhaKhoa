@@ -2985,8 +2985,11 @@
     <Content Include="Content\ckfinder\skins\v1\skin.js" />
     <Content Include="Content\ckfinder\skins\v1\uipanel.css" />
     <Content Include="Content\ckfinder\translations.txt" />
+    <Content Include="Content\css\admin-desktop.css" />
+    <Content Include="Content\css\desktop.css" />
     <Content Include="Content\css\home.css" />
     <Content Include="Content\css\login.css" />
+    <Content Include="Content\css\mobile.css" />
     <Content Include="Content\datepicker.min.css" />
     <Content Include="Content\files\emailtemplates\Confirm.txt" />
     <Content Include="Content\fontawesome\css\all.css" />
