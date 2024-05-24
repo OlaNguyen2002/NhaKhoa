@@ -31,6 +31,8 @@
     <link href="~/Content/assets/vendors/fontawesome/all.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="/Content/assets/vendors/bootstrap-icons/bootstrap-icons.css">
     <link href="~/Content/css/home.css" rel="stylesheet" />
+    <link href="~/Content/css/desktop.css" rel="stylesheet" media="screen and (min-width:560px)" />
+    <link href="~/Content/css/mobile.css" rel="stylesheet" media="screen and (max-width:559px)" />
     <style>
         .nav-link .user-name {
             font-family: 'Times New Roman';
@@ -215,7 +217,7 @@
             position: fixed;
             flex-direction: column;
             justify-content: center;
-            background-color: #309f5d;
+            background-color: #e12454;
             color: #fff;
             padding: 10px;
             margin: 5px;
@@ -234,71 +236,6 @@
 
         i.fa-rocketchat {
             font-size: 30px;
-        }
-
-        .modal-chat-container {
-            position: fixed;
-            bottom: 0px;
-            right: 0;
-            width: 540px;
-            height: 510px;
-            z-index: 99;
-        }
-
-            .modal-chat-container .modal-custom-chat {
-                display: flex;
-                border-radius: 30px;
-                flex-direction: column;
-                background-color: #fff;
-                animation: growth linear 0.2s;
-                --growth-from: 0.5;
-                --growth-to: 1;
-                border: 3px solid #309f5d;
-                width: 100%;
-                height: 100%;
-            }
-
-        .chat-header {
-            display: flex;
-            justify-content: center;
-        }
-
-            .chat-header h2 {
-                flex: 1;
-                text-align: center;
-                color: #309f5d;
-            }
-
-            .chat-header button {
-                width: 50px;
-                background-color: #fff;
-                border: none;
-                border-top-right-radius: 30px;
-            }
-
-                .chat-header button:hover {
-                    background-color: #309f5d;
-                    color: #fff;
-                }
-
-        .body-chat {
-            display: flex;
-            height: 100%;
-        }
-
-        .content-box-chat {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .box-chat {
-            flex: 2;
-        }
-
-        .chat-footer {
-            display: flex;
-            flex-direction: row;
         }
     </style>
     @RenderSection("styles", false)
@@ -631,23 +568,22 @@
         <i class="fa-brands fa-rocketchat"></i>
     </div>
 
-    <div class="modal-chat-container" style="display:none;">
-        <div class="modal-custom-chat">
-            <div class="chat-header">
-                <h2>Chat</h2>
+    <div class="chat-modal" id="chat-box" style="display:none;">
+        <div class="chat-form">
+            <div class="chat-form-header">
+                <h3>Trợ giúp</h3>
                 <button onclick="closeModalchat();"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="body-chat">
-                <div class="content-box-chat">
-                    <div class="box-chat">
-                        <ul class="chat-messages" id="chatMessages">
-                        </ul>
-                    </div>
-                    <div class="chat-footer">
-                        <textarea class="chat-input" id="messageInput" placeholder="Type your message..."></textarea>
-                        <button class="send-button" onclick="SendMessage();"><i class="fa-regular fa-paper-plane"></i></button>
-                    </div>
+            <div class="chat-form-body">
+                <div class="box-chat">
+                    <ul id="chatMessages">
+                       <li class="empty">Bạn cần trợ giúp gì?</li>
+                    </ul>
                 </div>
+            </div>
+            <div class="chat-form-footer">
+                <textarea id="messageInput" placeholder="Type your message..."></textarea>
+                <button onclick="SendMessage();"><i class="fa-regular fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
@@ -674,15 +610,11 @@
         let _webSocket;
         let _type = 'USER';
         const openModalChat = () => {
-            // $('.examname').val('');
-            // $('.examtime').val('');
-            $('.modal-chat-container').css('display', 'flex');
-            // check = 'insert';
-
+            $('#chat-box').css('display', 'flex');
         }
 
         const closeModalchat = () => {
-            $('.modal-chat-container').css('display', 'none')
+            $('#chat-box').css('display', 'none')
         }
 
         const GetUserLayoutInfo = async function () {
@@ -716,8 +648,8 @@
             $("#idService").html('')
             for (let i = 0; i < rs.data.length; i++) {
                 $('#idService').append(`
-                                                   <li><a href="/dich-vu/danh-sach?Currentpage=1&ServiceCategoryId=${rs.data[i].ServiceCategoryId}">${rs.data[i].Name}</a></li>
-                                           `)
+                                                           <li><a href="/dich-vu/danh-sach?Currentpage=1&ServiceCategoryId=${rs.data[i].ServiceCategoryId}">${rs.data[i].Name}</a></li>
+                                                   `)
             }
         }
         const numberNotification = async function () {
@@ -739,7 +671,8 @@
         const InitPage = async function () {
             await GetUserLayoutInfo();
             await GetListServiceCategory();
-            await numberNotification();
+            if (GetCookie('UserToken') !== '')
+                await numberNotification();
 
 
         }
@@ -762,32 +695,41 @@
 
 
 
-            _webSocket = new WebSocket(`/api/chat/get?account=${account}&type=${_type}`)
+            _webSocket = new WebSocket(`wss://${window.location.host}/api/chat/get?account=${account}&type=${_type}`)
 
             _webSocket.onopen = function (rs) {
                 console.log('onopen', rs)
             }
             _webSocket.onmessage = function (rs) {
-                console.log('onmessage', rs)
+             
 
                 const data = JSON.parse(rs.data);
+                $('#chatMessages .empty').hide();
 
-                $('#chatMessages').prepend(`<li>
-                    <label>${data.account}</label>
-                    <i>${data.message}</i>
-                    </li>`)
+                $('#chatMessages').append(`<li>
+                    <div class="message ${data.senderType.toLowerCase()}">
+
+                            <div>${data.message}</div>
+                            </div>
+                            </li>`);
+
+                $("#chatMessages").animate({ scrollTop: $("#chatMessages")[0].scrollHeight }, 500);
 
             }
         }
 
         const SendMessage = function () {
             const message = $('#messageInput').val();
+            if (message === '') return;
+
             const data = {
                 account: _account,
-                message: message
+                message: message,
+                senderType: _type
             };
 
             _webSocket.send(JSON.stringify(data));
+            $('#messageInput').val('');
         }
 
     </script>

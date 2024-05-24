@@ -1,0 +1,120 @@
+﻿.chat-modal {
+    position: fixed;
+    flex-direction: column;
+    bottom: 0px;
+    right: 0px;
+    z-index: 100;
+    width: 100%;
+}
+
+    .chat-modal .chat-form {
+        display: flex;
+        flex-direction: column;
+    }
+
+        .chat-modal .chat-form .chat-form-header {
+            display: flex;
+            align-items: center;
+            height: 50px;
+            background-color: #fff;
+            border-top: 5px solid #e12454;
+            border-left: 5px solid #e12454;
+            border-right: 5px solid #e12454;
+            border-radius: 15px 15px 0 0;
+        }
+
+            .chat-modal .chat-form .chat-form-header > h3 {
+                margin: 0;
+                font-size: 22px;
+                flex: 1;
+                text-align: center;
+                color: #e12454;
+            }
+
+            .chat-modal .chat-form .chat-form-header > button {
+                background: none;
+                background-color: transparent;
+                outline: none;
+                border: none;
+                width: 50px;
+                height: 100%;
+                color: #e12454;
+            }
+
+        .chat-modal .chat-form .chat-form-body {
+            border-left: 5px solid #e12454;
+            border-right: 5px solid #e12454;
+            border-top: .5px solid #e124544a;
+            border-bottom: .5px solid #e124544a;
+            background-color: #fff;
+        }
+
+            .chat-modal .chat-form .chat-form-body .box-chat {
+            }
+
+                .chat-modal .chat-form .chat-form-body .box-chat > ul {
+                    height: 300px;
+                    overflow: auto;
+                }
+
+                    .chat-modal .chat-form .chat-form-body .box-chat > ul > li {
+                    }
+                        .chat-modal .chat-form .chat-form-body .box-chat > ul > li.empty {
+                            font-size: 16px;
+                            font-weight: normal;
+                            font-style: italic;
+                            text-align: center;
+                            padding: 15px;
+                        }
+                        .chat-modal .chat-form .chat-form-body .box-chat > ul > li .message {
+                            padding: 4px 8px;
+                            display: flex;
+                        }
+
+                            .chat-modal .chat-form .chat-form-body .box-chat > ul > li .message.user {
+                                justify-content: flex-end;
+                            }
+
+                            .chat-modal .chat-form .chat-form-body .box-chat > ul > li .message.admin {
+                            }
+
+                            .chat-modal .chat-form .chat-form-body .box-chat > ul > li .message > div {
+                                font-size: 14px;
+                                font-weight: normal;
+                                color: #4c4c4c;
+                                max-width: 75%;
+                                padding: 5px 10px;
+                                border-radius: 5px;
+                            }
+
+                            .chat-modal .chat-form .chat-form-body .box-chat > ul > li .message.user > div {
+                                background-color: #f3c6d1;
+                            }
+
+                            .chat-modal .chat-form .chat-form-body .box-chat > ul > li .message.admin > div {
+                                background-color: #e4e4e4;
+                            }
+
+        .chat-modal .chat-form .chat-form-footer {
+            display: flex;
+            height: 100px;
+            background-color: #fff;
+            border-bottom: 5px solid #e12454;
+            border-left: 5px solid #e12454;
+            border-right: 5px solid #e12454;
+            border-radius: 0 0 15px 15px;
+        }
+
+            .chat-modal .chat-form .chat-form-footer > textarea {
+                height: 100%;
+                border: none;
+                background: none;
+                padding: 10px;
+            }
+
+            .chat-modal .chat-form .chat-form-footer > button {
+                width: 80px;
+                border: none;
+                border-radius: 0 0 10px 0;
+                background-color: #d87c8e;
+            }
