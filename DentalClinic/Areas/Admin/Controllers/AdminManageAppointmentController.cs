@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DentalClinic.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -22,6 +23,11 @@ namespace DentalClinic.Areas.Admin.Controllers
             return View();
         }
         public ActionResult Detail(string userAppointmentId)
+        {
+            ViewBag.UserAppointmentId = userAppointmentId;
+            return View();
+        }
+        public ActionResult UpdateAppointment(string userAppointmentId)
         {
             ViewBag.UserAppointmentId = userAppointmentId;
             return View();

@@ -1,0 +1,491 @@
+﻿
+@{
+    //Layout = null;
+    ViewBag.Menu = "manage-appointment";
+}
+
+<link href="~/Content/datepicker.min.css" rel="stylesheet" />
+@section styles{
+    <style>
+        .form-add-customer {
+            margin: auto;
+            width: 600px;
+        }
+
+        #form-add .info-detail .form-custom {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding-top: 10px;
+        }
+
+            #form-add .info-detail .form-custom .label-custom {
+                display: flex;
+                min-width: 170px;
+                font-size: 1rem;
+                line-height: 1.4;
+                align-items: center;
+            }
+
+                #form-add .info-detail .form-custom .label-custom label {
+                    margin-bottom: 0;
+                }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .modal-container {
+            background-color: #fff;
+            width: 900px;
+            max-width: calc(100% - 32px);
+            position: relative;
+            animation: modalFadeIn ease 0.5s;
+            transition: top 0.4s, opacity 0.4s;
+        }
+
+        .modal-header {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center !important;
+            font-size: 20px;
+            border-bottom: solid #ccc 0.5px;
+            text-transform: uppercase;
+        }
+
+        .modal-body {
+            width: 90%;
+            margin: auto;
+        }
+
+        .modal-footer {
+            width: 90%;
+            margin: auto;
+            justify-content: end;
+            display: flex;
+            gap: 10px;
+            padding-bottom: 10px;
+        }
+
+            .modal-footer .update-btn {
+                width: 100px;
+                padding: 5px 5px;
+                background-color: #435ebe;
+                color: white;
+                border-radius: 5px;
+                cursor: pointer;
+                border: solid #435ebe 1px;
+            }
+
+            .modal-footer .close-modal {
+                width: 80px;
+                color: black;
+                border: solid #ccc 0.5px;
+                cursor: pointer;
+                border-radius: 5px;
+            }
+
+        .list-service-pick {
+            display: flex;
+            flex-direction: column;
+        }
+
+            .list-service-pick .item-pick {
+                display: flex;
+                align-items: center;
+                font-weight: 600;
+                padding: 5px 10px;
+            }
+
+                .list-service-pick .item-pick .icon-left {
+                    flex: .5;
+                }
+
+                .list-service-pick .item-pick .content {
+                    flex: 2;
+                    display: flex;
+                    justify-content: space-between;
+                }
+
+                    .list-service-pick .item-pick .content > div:first-child {
+                        flex: 1;
+                    }
+
+                    .list-service-pick .item-pick .content > div:last-child {
+                        flex: 1;
+                        text-align: right;
+                    }
+
+                    .list-service-pick .item-pick .content > div:nth-child(2) {
+                        flex: 1;
+                        text-align: center;
+                    }
+
+                .list-service-pick .item-pick .button-delete {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    cursor: pointer;
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
+                    font-size: 25px;
+                    color: red;
+                    padding: 0;
+                    margin: 0;
+                }
+
+                    .list-service-pick .item-pick .button-delete:hover {
+                        background-color: #cdcdcd;
+                        animation: .2s ease-in-out;
+                    }
+
+        .total-amount {
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-right: 40px;
+        }
+    </style>
+}
+
+<input id="UserAppointmentId" value="@ViewBag.UserAppointmentId" type="hidden" />
+<div class="card">
+    <div class="form-add-customer" id="form-add">
+        <div style="padding: 20px; text-align: center;"><h2>Sửa hóa đơn</h2></div>
+        <div class="info-detail" id="info-detail">
+            <div class="form-group form-appointment">
+                <label class="font-weight-semibold"> Bác sĩ</label>
+                <div>
+                    <select class="form-select" id="DoctorId">
+                    </select>
+                </div>
+            </div>
+            <div class="date-hour-form">
+                <div class="form-group">
+                    <label class="font-weight-semibold">Ngày hẹn</label>
+                    <div class="date-pick">
+                        <input class="form-control" id="date" placeholder="Chọn ngày khám" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="font-weight-semibold">Giờ hẹn</label>
+                    <div>
+                        <select class="form-select" id="hour">
+                            <option value="">Chọn giờ khám</option>
+                            <option value="8:0">8:00</option>
+                            <option value="8:30">8:30</option>
+                            <option value="9:0">9:00</option>
+                            <option value="9:30">9:30</option>
+                            <option value="10:0">10:00</option>
+                            <option value="10:30">10:30</option>
+                            <option value="11:0">11:00</option>
+                            <option value="11:30">11:30</option>
+                            <option value="12:0">12:00</option>
+                            <option value="13:0">13:00</option>
+                            <option value="13:30">13:30</option>
+                            <option value="14:0">14:00</option>
+                            <option value="14:30">14:30</option>
+                            <option value="15:0">15:00</option>
+                            <option value="15:30">15:30</option>
+                            <option value="16:0">16:00</option>
+                            <option value="16:30">16:30</option>
+                            <option value="17:0">17:00</option>
+                            <option value="17:30">17:30</option>
+                            <option value="18:0">18:00</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="font-weight-semibold"> Dịch vụ</label>
+                <div>
+                    <select class="form-select" id="ServiceId" onchange="onchageService(this);">
+                    </select>
+                </div>
+                <div class="list-service-pick" id="list-service-pick">
+                </div>
+                <div class="total-amount">
+                    <div class="text">
+                        Tạm tính:
+                    </div>
+                    <div id="totalamount">
+
+                    </div>
+                    <div>
+                        (VND)
+                    </div>
+                </div>
+            </div>
+            <div class="form-custom">
+                <div class="form-footer" style="align-items: center;">
+                    <button type="button" onclick="UpdateAppointmentUser();" class="create-button btn btn-primary">Sửa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+@*Modal add user*@
+<div id="modalAddUser" class="modal" onclick="closeModal()">
+    <div class="modal-container">
+        <div class="modal-header">Thêm khách hàng</div>
+        <div class="modal-body">
+            <div class="form-add-customer" id="form-add">
+                <div class="info-detail" id="info-detail">
+                    <input id="userId" style="display:none" value="" />
+                    <div class="form-custom">
+                        <div class="label-custom">
+                            <label class="font-weight-semibold" for="Name">Họ tên:</label>
+                        </div>
+                        <input type="text" class="form-control" id="NameUser" placeholder="Họ và tên" value="">
+                    </div>
+
+                    <div class="form-custom">
+                        <div class="label-custom">
+                            <label class="font-weight-semibold" for="Email">Email:</label>
+                        </div>
+                        <input type="text" class="form-control" id="Email" placeholder="Email" value="">
+                    </div>
+
+                    <div class="form-custom">
+                        <div class="label-custom">
+                            <label class="font-weight-semibold" for="phoneNum">Số điện thoại:</label>
+                        </div>
+                        <input type="text" class="form-control" id="phoneNum" placeholder="Số điện thoại" value="">
+                    </div>
+
+                    <div class="form-custom">
+                        <div class="label-custom">
+                            <label class="font-weight-semibold" for="fullAddress">Địa chỉ:</label>
+                        </div>
+                        <input type="text" class="form-control" id="fullAddress" placeholder="Địa chỉ chi tiết" value="">
+                    </div>
+                    <div class="form-custom" style="display: flex; justify-content: flex-end;">
+                        <div class="form-footer">
+                            <button type="button" onclick="closeModal();" class="create-button btn btn-secondary">Đóng</button>
+                            <button type="button" onclick="AddUser();" class="create-button btn btn-primary">Thêm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/Scripts/helper.js"></script>
+    <script src="~/Content/assets/vendors/sweetalert2/sweetalert2.all.min.js"></script>
+    <script src="~/Content/assets/js/datepicker.min.js"></script>
+    <script>
+        $('#date').datepicker({
+            format: 'dd-mm-yyyy'
+        });
+
+        $('#hour').datepicker({
+            format: 'dd-mm-yyyy'
+        });
+
+        let userAppointment = [];
+
+        const GetListDoctor = async function () {
+            let rp = await fetch('/api/manageDoctor/GetListDoctor', {
+                method: 'get',
+                headers: Enum.OptionHeaderDefault
+            });
+            let rs = await rp.json();
+
+            $('#DoctorId').html('<option value="" selected>Chọn bác sĩ</option>');
+            for (let index = 0; index < rs.data.length; index++) {
+                var x = rs.data[index]
+                $('#DoctorId').append(`<option value="${x.DoctorId}">${x.Name}</option>`);
+            }
+        }
+
+        const GetListService = async function () {
+            let rp = await fetch('/api/manageServices/GetListService', {
+                method: 'get',
+                headers: Enum.OptionHeaderDefault
+            });
+            let rs = await rp.json();
+
+            $('#ServiceId').html('<option value="" selected>Chọn dịch vụ</option>');
+            for (let index = 0; index < rs.data.length; index++) {
+                var x = rs.data[index]
+                $('#ServiceId').append(`<option value="${x.ServiceId}" data-price="${x.Price}" data-time="${x.ExpectTime}">${x.Name}</option>`);
+            }
+        }
+
+
+
+        const onchageService = async function (select) {
+            debugger;
+            let itemPick = $(select).find(':selected');
+            let id = $(itemPick).val();
+            let text = $(itemPick).text();
+            let price = $(itemPick).data('price');
+            let expectTime = $(itemPick).data('time');
+            let listpick = $('#list-service-pick').find('.item-pick');
+            let flag = 0;
+            for (let index = 0; index < listpick.length; index++) {
+                let item = $(listpick[index]);
+                if ($(item).data('id') === id) {
+                    flag++;
+                }
+            }
+            if (flag === 0 && id !== '') {
+                $('#list-service-pick').append(`
+                            <div class="item-pick" data-id="${id}" data-amount="${price}" data-time="${expectTime}">
+                                                    <div class="icon-left">
+                                                        -
+                                                    </div>
+                                                    <div class="content">
+                                                        <div>${text}</div>
+                                                        <div>${expectTime} (phút)</div>
+                                                        <div>${NumberFormat(parseInt(price))} đ</div>
+                                                    </div>
+                                                    <div class="button-delete" onclick="deleteButton(this);">
+                                                        x
+                                                    </div>
+                                                </div>
+                            `);
+            }
+            totalPrice();
+        }
+
+        var totalPrice = function () {
+            let listPriceService = $('#list-service-pick').find('.item-pick');
+            let totalPrice = 0;
+            for (let i = 0; i < listPriceService.length; i++) {
+                totalPrice += parseInt($(listPriceService[i]).data('amount'));
+            }
+            $('#totalamount').text(NumberFormat(totalPrice));
+            let totalForm = $('.form-group').find('.total-amount');
+            totalPrice === 0 ? $(totalForm).hide() : $(totalForm).show();
+        }
+
+        const deleteButton = function (button) {
+            $(button).closest('.item-pick').remove();
+            totalPrice();
+        }
+
+        const getUserAppointmentService = async function () {
+            debugger;
+            let userAppointmentId = $('#UserAppointmentId').val();
+
+            
+
+            let rq = await fetch(Enum.ApiUrl + '/api/AdminManageAppointment/GetAppointmentDetail?userAppointmentId=' + userAppointmentId, {
+                method: 'get',
+                headers: Enum.OptionAdminHeaderDefault
+            });
+            let rs = await rq.json();
+            userAppointment = rs.data.userAppointment;
+            console.log(rs);
+            let item = rs.data;
+            for (let i = 0; i < item.listUserAppointmentDetail.length; i++) {
+                $('#list-service-pick').append(`
+<div class="item-pick" data-id="${item.listUserAppointmentDetail[i].ServiceId}" data-amount="${item.listUserAppointmentDetail[i].PriceService}" data-time="${item.listUserAppointmentDetail[i].ExpectTime}">
+                            <div class="icon-left">
+                                -
+                            </div>
+                            <div class="content">
+                                <div>${item.listUserAppointmentDetail[i].NameService}</div>
+                                <div>${item.listUserAppointmentDetail[i].ExpectTime} (phút)</div>
+                                <div>${NumberFormat(parseInt(item.listUserAppointmentDetail[i].PriceService))} đ</div>
+                            </div>
+                            <div class="button-delete" onclick="deleteButton(this);">
+                                x
+                            </div>
+                        </div>
+`);
+            }
+            $('#DoctorId').val(rs.data.userAppointment.DoctorId);
+            $('#date').val(rs.data.userAppointment.Day + '-' + rs.data.userAppointment.Month + '-' + rs.data.userAppointment.Year);
+            $('#hour').val(rs.data.userAppointment.Hour + ':' + rs.data.userAppointment.Minute);
+
+            totalPrice();
+        }
+
+        const UpdateAppointmentUser = async function () {
+            let datetimePicker = $('#date').val().split('-');
+            let day = parseInt(datetimePicker[0]);
+            let month = parseInt(datetimePicker[1]);
+            let year = parseInt(datetimePicker[2]);
+
+            let timePicker = $('#hour').find(':selected').text().split(':');
+            let hour = parseInt(timePicker[0]);
+            let minute = parseInt(timePicker[1]);
+
+            let listService = [];
+            let listDataPick = $('#list-service-pick').find('.item-pick');
+            for (let i = 0; i < listDataPick.length; i++) {
+                listService.push({
+                    ServiceId: $(listDataPick[i]).data('id'),
+                    ExpectTime: $(listDataPick[i]).data('time')
+                });
+            }
+
+            let model = {
+                UserAppointmentId: userAppointment.UserAppointmentId,
+                DoctorId: $('#DoctorId').find(':selected').val(),
+                UserId: $('#UserId').find(':selected').val(),
+                Day: day,
+                Month: month,
+                Year: year,
+                Hour: hour,
+                Minute: minute,
+                ListServiceId: listService
+            }
+            console.log(model)
+            let rp = await fetch('/api/AdminManageAppointment/UpdateAppointment', {
+                method: 'post',
+                headers: Enum.OptionAdminHeaderDefault,
+                body: JSON.stringify(model)
+            });
+            let rs = await rp.json();
+            if (CheckErrorResponse(rs) === false) return;
+            if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Sửa lịch hẹn thành công.",
+                    preConfirm: function () {
+                        window.location.href = '/admin/adminmanageappointment/manageappointment';
+                    }
+                })
+            } else {
+                alert(rs.Message);
+            }
+
+        }
+
+        const InitPage = async function () {
+            await GetListDoctor();
+            await GetListService();
+            await totalPrice();
+            await getUserAppointmentService();
+        }
+
+
+
+        InitPage();
+    </script>
+}

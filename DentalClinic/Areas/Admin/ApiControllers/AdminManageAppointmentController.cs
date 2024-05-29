@@ -193,6 +193,104 @@ namespace DentalClinic.Areas.Admin.ApiControllers
             }
         }
 
+        [HttpPost]
+        [ApiAdminTokenRequire]
+        public JsonResult UpdateAppointment(UserAppointmentModel model)
+        {
+            try
+            {
+                using (var connect = BaseService.Connect())
+                {
+                    connect.Open();
+                    using (var transaction = connect.BeginTransaction())
+                    {
+
+                        UserService userService = new UserService(connect);
+                        DoctorService doctorService = new DoctorService(connect);
+                        ServiceService serviceService = new ServiceService(connect);
+                        UserMakeAppointmentService userMakeAppointmentService = new UserMakeAppointmentService(connect);
+
+                        UserAppointment userAppointment = userMakeAppointmentService.GetUserAppointmentById(model.UserAppointmentId, transaction);
+                        if (userAppointment == null) throw new Exception("Không tồn tại lịch hẹn này");
+
+                        Doctor doctor = doctorService.GetDoctorById(model.DoctorId, transaction);
+                        if (doctor == null) return Error("Bạn chưa chọn bác sĩ.");
+
+                        long now = HelperProvider.GetSeconds();
+
+                        if(model.Hour != userAppointment.Hour && model.Minute != userAppointment.Minute && model.Day != userAppointment.Day && model.Month != userAppointment.Month && model.Year != userAppointment.Year)
+                        {
+                            long timeOrder = HelperProvider.GetSeconds(new DateTime(model.Year, model.Month, model.Day, model.Hour, model.Minute, 0, 0));
+                            if (timeOrder <= now) return Error("Bạn phải đặt sau thời điểm hiện tại");
+                        }
+
+                        
+
+                        if (model.Hour <= 0) return Error("Bạn chưa chọn giờ hẹn.");
+
+                        
+
+                        userAppointment.DoctorId = doctor.DoctorId;
+                        userAppointment.Hour = model.Hour;
+                        userAppointment.Minute = model.Minute;
+                        userAppointment.Day = model.Day;
+                        userAppointment.Month = model.Month;
+                        userAppointment.Year = model.Year;
+
+                        
+
+                        int totalExpectTime = 0;
+                        decimal totalPrice = 0;
+                        if (model.ListServiceId.Count <= 0) return Error("Bạn chưa chọn dịch vụ nào.");
+
+                        userMakeAppointmentService.DeleteUserAppointmentService(userAppointment.UserAppointmentId, transaction);
+
+                        for (int i = 0; i < model.ListServiceId.Count; i++)
+                        {
+                            string ServiceId = model.ListServiceId[i].ServiceId;
+                            ServiceDental serviceDental = serviceService.GetServiceById(ServiceId, transaction);
+
+                            UserAppointmentService userAppointmentService = new UserAppointmentService();
+                            userAppointmentService.UserAppointmentServiceId = Guid.NewGuid().ToString();
+                            userAppointmentService.UserAppointmentId = userAppointment.UserAppointmentId;
+                            userAppointmentService.ServiceId = serviceDental.ServiceId;
+                            userAppointmentService.ExpectTime = serviceDental.ExpectTime;
+                            totalExpectTime += serviceDental.ExpectTime;
+                            totalPrice += serviceDental.Price;
+                            if (!userMakeAppointmentService.CreateUserAppointmentService(userAppointmentService, transaction)) throw new Exception();
+                        }
+                        userAppointment.TotalExpectTime = totalExpectTime;
+                        userAppointment.TotalAmount = totalPrice;
+                        userMakeAppointmentService.UpdateHourDateUserAppointment(model.UserAppointmentId, transaction);
+                        // lấy ra danh sách đơn của bác sĩ ngày đơn đặt mới
+                        List<UserAppointment> lsuserAppointmentsByDoctor = userMakeAppointmentService.GetListUserAppointmentByDoctorId(model.DoctorId, model.Day, model.Month, model.Year, transaction);
+                        List<TimeDoctor> lstimeDoctors = new List<TimeDoctor>();
+                        for (int i = 0; i < lsuserAppointmentsByDoctor.Count; i++)
+                        {
+                            TimeDoctor timeDoctor = new TimeDoctor();
+                            timeDoctor.MinTime = lsuserAppointmentsByDoctor[i].Hour * 60 + lsuserAppointmentsByDoctor[i].Minute;
+                            timeDoctor.MaxTime = timeDoctor.MinTime + lsuserAppointmentsByDoctor[i].TotalExpectTime;
+                            lstimeDoctors.Add(timeDoctor);
+                        }
+                        int minTime = model.Hour * 60 + model.Minute;
+                        int maxTime = minTime + userAppointment.TotalExpectTime;
+                        bool checkOrder = UserProvider.CheckTimeOrder(minTime, maxTime, lstimeDoctors, connect, transaction);
+                        if (checkOrder == false)
+                        {
+                            throw new Exception("Bác sĩ bận trong thời gian này, vui lòng chọn bác sĩ hoặc thời gian khác");
+                        }
+                        userMakeAppointmentService.UpdateUserAppointment(userAppointment, transaction);
+
+                        transaction.Commit();
+                        return Success();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Error(ex.Message);
+            }
+        }
 
         [HttpGet]
         [ApiAdminTokenRequire]
@@ -499,7 +597,7 @@ namespace DentalClinic.Areas.Admin.ApiControllers
         }
 
         [HttpGet]
-        [ApiAdminTokenRequire]
+        //[ApiAdminTokenRequire]
         public JsonResult GetAppointmentDetail(string userAppointmentId)
         {
             try
@@ -523,7 +621,7 @@ namespace DentalClinic.Areas.Admin.ApiControllers
             worksheet.DefaultColWidth = 10;
             worksheet.Cells.Style.WrapText = true;
 
-            worksheet.Cells["A1:D1"].Value = "NHA KHOA PHƯƠNG THẢO";
+            worksheet.Cells["A1:D1"].Value = "NHA KHOA HỮU TUẤN";
             worksheet.Cells["A2:D2"].Value = "HÓA ĐƠN ĐẶT PHÒNG";
 
 

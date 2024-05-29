@@ -5231,6 +5231,7 @@
     <Content Include="Areas\Admin\Views\AdminManageAppointment\ManageAppointment.cshtml" />
     <Content Include="Areas\Admin\Views\Report\Index.cshtml" />
     <Content Include="Areas\Admin\Views\AdminManageAppointment\Detail.cshtml" />
+    <Content Include="Areas\Admin\Views\AdminManageAppointment\UpdateAppointment.cshtml" />
     <None Include="Scripts\jquery-1.6.4-vsdoc.js" />
     <Content Include="Scripts\jquery-1.6.4.js" />
     <Content Include="Scripts\jquery-1.6.4.min.js" />

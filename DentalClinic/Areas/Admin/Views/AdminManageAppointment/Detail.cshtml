@@ -152,10 +152,19 @@
         </div>
     </div>
 </div>
-<div style="display: flex; justify-content: flex-end;"><button class="btn btn-primary" onclick="ExportPdfOrder();">In hóa đơn</button></div>
+<div style="display: flex; flex-direction: row-reverse;">
+    <div style="display: flex; justify-content: flex-end;"><button class="btn btn-primary" onclick="GetBill();">Sửa hóa đơn</button></div>
+    <div style="display: flex; justify-content: flex-end;margin-right:5px;"><button class="btn btn-primary" onclick="ExportPdfOrder();">In hóa đơn</button></div>
+</div>
 @*<div style="display: flex; justify-content: flex-end;"><button class="btn btn-primary" onclick="ExportOrder();">In hóa đơn</button></div>*@
 @section Scripts{
     <script>
+
+        const GetBill = async function () {
+            let userAppointmentId = $('#UserAppointmentId').val();
+            window.location.href = ('/admin/AdminManageAppointment/UpdateAppointment?userAppointmentId=' + userAppointmentId);
+        }
+
         let userAppointmentInfo = {
             Name: '',
             Phone: '',
@@ -168,7 +177,7 @@
         let listServiceDental = [];
 
         const GetListAppointmentDetailUser = async function () {
-            
+
             let userAppointmentId ='@ViewBag.UserAppointmentId';
             let rq = await fetch(Enum.ApiUrl + '/api/AdminManageAppointment/GetAppointmentDetail?userAppointmentId=' + userAppointmentId, {
                 method: 'get',
@@ -185,7 +194,6 @@
                 Day: rs.data.userAppointment.Day,
                 TotalAmount: rs.data.userAppointment.TotalAmount
             }
-            debugger;
             if (CheckErrorResponse(rs) === false) return;
             $('#order-detail').html('')
             if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
@@ -230,7 +238,7 @@
             let model = {
                 UserAppointmentInfo: userAppointmentInfo,
                 ListServiceDental: listServiceDental
-               
+
             };
 
             if (confirm("Xác nhận xuất hóa đơn !")) {

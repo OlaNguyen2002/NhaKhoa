@@ -80,5 +80,24 @@ namespace DentalClinic.Services
             string query = "Select * from user_appointment where UserAppointmentId =@userAppointmentId";
             return this._connection.Query<UserAppointmentServiceUpdate>(query, new { userAppointmentId }, transaction).ToList();
         }
+
+        public void UpdateUserAppointment(UserAppointment model,IDbTransaction transaction = null)
+        {
+            string query = "UPDATE [dbo].[user_appointment] SET [DoctorId] = @DoctorId,[Hour] = @Hour,[Minute] = @Minute,[Day] = @Day,[Month] = @Month,[Year] = @Year,[TotalExpectTime] = @TotalExpectTime,[TotalAmount] = @TotalAmount" +
+                " WHERE [UserAppointmentId] = @UserAppointmentId";
+            this._connection.Execute(query,  model , transaction);
+        }
+
+        public void DeleteUserAppointmentService(string userAppointmentId,IDbTransaction transaction = null)
+        {
+            string query = "DELETE FROM [dbo].[user_appointment_service] WHERE UserAppointmentId = @userAppointmentId";
+            this._connection.Execute(query, new { userAppointmentId }, transaction);
+        }
+
+        public void UpdateHourDateUserAppointment(string userAppointmentId,IDbTransaction transaction = null)
+        {
+            string query = "UPDATE [dbo].[user_appointment] SET [Hour] = 0,[Minute] = 0,[Day] = 0,[Month] = 0,[Year] = 0 WHERE [UserAppointmentId] = @userAppointmentId";
+            this._connection.Execute(query,new { userAppointmentId},transaction);
+        }
     }
 }

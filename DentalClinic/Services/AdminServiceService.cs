@@ -42,7 +42,7 @@ namespace DentalClinic.Services
         }
         public ServiceDental GetServiceById(string serviceId, IDbTransaction transaction = null)
         {
-            string query = "select * from service where ServiceId=@serviceId ";
+            string query = "select * from service_dental where ServiceId=@serviceId ";
             return _connection.Query<ServiceDental>(query, new { serviceId }, transaction).FirstOrDefault();
         }
         public bool InsertService(ServiceDental service, IDbTransaction transaction = null)
@@ -52,7 +52,7 @@ namespace DentalClinic.Services
         }
         public bool UpdateService(ServiceDental service, IDbTransaction transaction = null)
         {
-            string query = "UPDATE [service] SET [Name]=@Name, [SearchName]=@SearchName, [Thumbnail]=@Thumbnail, [ExpectTime]=@ExpectTime, [Description]=@Description,[ServiceCategoryId]=@ServiceCategoryId,[Price]=@Price,[CreateTime]=@CreateTime, [Enable]=@Enable  WHERE ServiceId=@ServiceId";
+            string query = "UPDATE [service_dental] SET [Name]=@Name, [SearchName]=@SearchName, [Thumbnail]=@Thumbnail, [ExpectTime]=@ExpectTime, [Description]=@Description,[ServiceCategoryId]=@ServiceCategoryId,[Price]=@Price,[CreateTime]=@CreateTime, [Enable]=@Enable  WHERE ServiceId=@ServiceId";
             return _connection.Execute(query, service, transaction) > 0; ;
         }
         public bool DeleteService(string serviceId, IDbTransaction transaction = null)

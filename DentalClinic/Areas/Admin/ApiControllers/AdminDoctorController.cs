@@ -34,6 +34,7 @@ namespace DentalClinic.Areas.Admin.ApiControllers
             return Success(adminDoctorService.GetDoctorById(id));
         }
         [HttpPost]
+        [AllowAnonymous]
         public JsonResult InsertDoctor(Doctor model)
         {
             try
@@ -74,6 +75,7 @@ namespace DentalClinic.Areas.Admin.ApiControllers
 
 
         [HttpPost]
+        [AllowAnonymous]
         public JsonResult UpdateDoctor(Doctor model)
         {
             try
@@ -113,6 +115,7 @@ namespace DentalClinic.Areas.Admin.ApiControllers
             }
         }
         [HttpGet]
+        [AllowAnonymous]
         public JsonResult DeleteDoctor(string doctorId)
         {
             try
