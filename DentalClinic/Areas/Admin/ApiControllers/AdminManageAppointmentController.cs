@@ -212,6 +212,8 @@ namespace DentalClinic.Areas.Admin.ApiControllers
 
                         UserAppointment userAppointment = userMakeAppointmentService.GetUserAppointmentById(model.UserAppointmentId, transaction);
                         if (userAppointment == null) throw new Exception("Không tồn tại lịch hẹn này");
+                        if (userAppointment.Status == UserAppointment.EnumStatus.DONE) throw new Exception("Hóa đơn đã hoàn thành không thể sửa!");
+
 
                         Doctor doctor = doctorService.GetDoctorById(model.DoctorId, transaction);
                         if (doctor == null) return Error("Bạn chưa chọn bác sĩ.");
@@ -359,7 +361,7 @@ namespace DentalClinic.Areas.Admin.ApiControllers
 
                         //Email
                         if (!string.IsNullOrEmpty(userAppointment.Email))
-                            SMSProvider.SendOTPViaEmail(userAppointment.Email, "", "THÔNG BÁO XÁC NHẬN"," Phòng khám nha khoa Phương Thảo đã tiếp nhận lịch hẹn [" + userAppointment.AppointmentCode + "] của bạn. Hãy chú ý để đến phòng khám đúng hẹn. Xin trân trọng cảm ơn!");
+                            SMSProvider.SendOTPViaEmail(userAppointment.Email, "", "THÔNG BÁO XÁC NHẬN"," Phòng khám nha khoa Hữu Tuấn đã tiếp nhận lịch hẹn [" + userAppointment.AppointmentCode + "] của bạn. Hãy chú ý để đến phòng khám đúng hẹn. Xin trân trọng cảm ơn!");
 
                         // Thông báo cho người dùng
                         Notification notification = new Notification();

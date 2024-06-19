@@ -273,11 +273,13 @@
     <Content Include="Content\assets\images\logo-dark.png" />
     <Content Include="Content\assets\images\logo-icon.png" />
     <Content Include="Content\assets\images\logo-light.png" />
+    <Content Include="Content\assets\images\logo\download.png" />
     <Content Include="Content\assets\images\logo\logo-default.png" />
     <Content Include="Content\assets\images\logo\logo-white.png" />
     <Content Include="Content\assets\images\logo\logo.jpg" />
     <Content Include="Content\assets\images\logo\logo.png" />
     <Content Include="Content\assets\images\logo\logo_dental.png" />
+    <Content Include="Content\assets\images\logo\Remove-bg.ai_1717242936172.png" />
     <Content Include="Content\assets\images\others\banner.jpg" />
     <Content Include="Content\assets\images\others\caption-img-1.jpg" />
     <Content Include="Content\assets\images\others\caption-img-2.jpg" />

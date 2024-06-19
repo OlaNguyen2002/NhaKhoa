@@ -36,6 +36,7 @@ namespace DentalClinic.Areas.Admin.ApiControllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public JsonResult InsertNews(News model)
         {
             try

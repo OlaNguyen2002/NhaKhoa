@@ -16,8 +16,28 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <link href="~/Content/css/admin-desktop.css" rel="stylesheet" />
     <style>
+        .burger-btn {
+            width: 30px;
+            height: 30px;
+            align-items: center;
+            justify-content: center;
+        }
         .submenu .submenu-item {
             cursor: pointer;
+        }
+
+        #sidebar.active {
+            display: block;
+        }
+
+        #sidebar {
+            width: 250px;
+            background-color: #f1f1f1;
+            padding: 15px;
+            position: absolute;
+            top: 0;
+            left: -250px; /* Ban đầu ẩn đi */
+            transition: left 0.3s; /* Thêm transition */
         }
 
         .overlay {
@@ -376,7 +396,7 @@
             <header class='mb-3'>
                 <nav class="navbar navbar-expand navbar-light ">
                     <div class="container-fluid">
-                        <a href="#" class="burger-btn d-block">
+                        <a href="#" class="burger-btn d-flex" id="burgerButton">
                             <i class="fa-solid fa-bars"></i>
                         </a>
 
@@ -507,6 +527,17 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script>
+
+        $(document).ready(function () {
+            $('#toggleButton').click(function () {
+                $('#sidebar').removeClass('active');
+            });
+
+            // Add this new function
+            $('#burgerButton').click(function () {
+                $('#sidebar').toggleClass('active');
+            });
+        });
 
         let _type = 'ADMIN';
         let _receiveAccount = '';

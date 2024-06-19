@@ -194,23 +194,30 @@
                             status = '<span class="badge bg-light-warning"> Mới hẹn </span>';
                             button = '<button class="btn btn-primary btn-tone m-r-5 btn-sm" onclick="confirmPending(this)" data-id="' + x.UserAppointmentId + '"> Tiếp nhận </button>';
                             button += '<button class="btn btn-danger btn-tone m-r-5 btn-sm" onclick="adminCancel(this)" data-id="' + x.UserAppointmentId + '"> Huỷ </button>';
+                            button += '<button class="btn btn-info btn-tone m-r-5 btn-sm" onclick="DetailAppointment(this)" data-id="' + x.UserAppointmentId + '"> Xem chi tiết </button>';
                             break;
                         case 'RECEIVE':
                             status = '<span class="badge bg-light-info"> Đã tiếp nhận </span>';
                             button = '<button class="btn btn-success btn-tone m-r-5 btn-sm" data-id="' + x.UserAppointmentId + '" onclick="confirmReceive(this)"> Đã đến </button>';
+                            button += '<button class="btn btn-danger btn-tone m-r-5 btn-sm" onclick="adminCancel(this)" data-id="' + x.UserAppointmentId + '"> Huỷ </button>';
+                            button += '<button class="btn btn-info btn-tone m-r-5 btn-sm" onclick="DetailAppointment(this)" data-id="' + x.UserAppointmentId + '"> Xem chi tiết </button>';
                             break;
-
+                        case 'CONFIRM_ARRIVE':
+                            status = '<span class="badge bg-light-secondary"> Đã đến </span>';
+                            button = '<button class="btn btn-success btn-tone m-r-5 btn-sm" data-id="' + x.UserAppointmentId + '" onclick="confirmArrive(this)"> Hoàn thành </button>';
+                            button += '<button class="btn btn-info btn-tone m-r-5 btn-sm" onclick="DetailAppointment(this)" data-id="' + x.UserAppointmentId + '"> Xem chi tiết </button>';
+                            break;
                         case 'DONE':
                             status = '<span class="badge bg-light-success"> Đã đến </span>';
-
+                            button += '<button class="btn btn-info btn-tone m-r-5 btn-sm" onclick="DetailAppointment(this)" data-id="' + x.UserAppointmentId + '"> Xem chi tiết </button>';
                             break;
                         case 'USER_CANCEL':
                             status = '<span class="badge bg-light-danger"> Người dùng huỷ </span>';
-
+                            button += '<button class="btn btn-info btn-tone m-r-5 btn-sm" onclick="DetailAppointment(this)" data-id="' + x.UserAppointmentId + '"> Xem chi tiết </button>';
                             break;
                         case 'SYSTEM_CANCEL':
                             status = '<span class="badge bg-light-danger"> Hệ thống huỷ </span>';
-
+                            button += '<button class="btn btn-info btn-tone m-r-5 btn-sm" onclick="DetailAppointment(this)" data-id="' + x.UserAppointmentId + '"> Xem chi tiết </button>';
                             break;
                         default: break;
                     }
@@ -243,6 +250,77 @@
             }
 
         }
+
+        const DetailAppointment = async function (el) {
+            let id = $(el).data('id');
+            window.location.href = ('/admin/AdminManageAppointment/Detail?userAppointmentId=' + id);
+        }
+
+        const confirmPending = async function (el) {
+            $(el).addClass('is-loading');
+            let UserAppointmentId = $(el).data('id');
+
+            if (confirm('Bạn có chắc chắn muốn xác nhận lịch hẹn này được tiếp nhận?')) {
+                let rq = await fetch(Enum.ApiUrl + '/Api/AdminManageAppointment/ConfirmAppointment?userAppointmentId=' + UserAppointmentId, {
+                    method: 'get',
+                    headers: Enum.OptionAdminHeaderDefault,
+                });
+                let rs = await rq.json();
+                $(el).removeClass('is-loading');
+                if (AdminCheckErrorResponse(rs) === false) return;
+
+                if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                    alert('Cập nhật trạng thái thành công');
+                    window.location.reload();
+                }
+            }
+
+        }
+
+        const confirmReceive = async function (el) {
+            let UserAppointmentId = $(el).data('id');
+            $(el).addClass('is-loading');
+            if (confirm('Bạn có chắc chắn muốn xác nhận khách hàng đã đến ?')) {
+                let rq = await fetch(Enum.ApiUrl + '/api/AdminManageAppointment/ConfirmArrive?userAppointmentId=' + UserAppointmentId, {
+                    method: 'get',
+                    headers: Enum.OptionAdminHeaderDefault,
+                });
+                let rs = await rq.json();
+
+                $(el).removeClass('is-loading');
+
+                if (AdminCheckErrorResponse(rs) === false) return;
+
+                if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                    alert('Cập nhật trạng thái thành công');
+                    window.location.reload();
+                }
+            }
+
+        }
+
+        const confirmArrive = async function (el) {
+            let UserAppointmentId = $(el).data('id');
+            $(el).addClass('is-loading');
+            if (confirm('Bạn có chắc chắn muốn xác nhận hoàn thành dịch vụ ?')) {
+                let rq = await fetch(Enum.ApiUrl + '/api/AdminManageAppointment/DoneAppointment?userAppointmentId=' + UserAppointmentId, {
+                    method: 'get',
+                    headers: Enum.OptionAdminHeaderDefault,
+                });
+                let rs = await rq.json();
+
+                $(el).removeClass('is-loading');
+
+                if (AdminCheckErrorResponse(rs) === false) return;
+
+                if (GetObjectProperty(rs, 'status') === Enum.ResponseStatus.SUCCESS) {
+                    alert('Cập nhật trạng thái thành công');
+                    window.location.reload();
+                }
+            }
+
+        }
+
         const initPage = async function () {
             await getListAppointment();
         }

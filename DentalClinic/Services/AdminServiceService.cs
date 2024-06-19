@@ -57,7 +57,7 @@ namespace DentalClinic.Services
         }
         public bool DeleteService(string serviceId, IDbTransaction transaction = null)
         {
-            string query = "DELETE FROM service where ServiceId=@serviceId";
+            string query = "DELETE FROM [service_dental] where ServiceId=@serviceId";
             return _connection.Execute(query, new { serviceId }, transaction) > 0;
         }
         public List<ServiceDental> GetListTopService(IDbTransaction transaction = null)
